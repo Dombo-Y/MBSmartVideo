@@ -59,6 +59,11 @@ MBActionSheetDelegate
     self.playerLayer.position = self.view.center;
     [self.videoView.layer addSublayer: self.playerLayer];
     [self.playerLayer setNeedsDisplay];
+    if ([[[UIDevice currentDevice] systemVersion] integerValue] >10)
+    {
+        _player.automaticallyWaitsToMinimizeStalling = NO; // 在iOS10下，默认为YES，如果视频加载不出来，系统会一直等待加载，造成下一个视频也无法播放
+    }
+    
     
     [self starAction:self.startButton];
     
