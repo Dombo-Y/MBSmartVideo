@@ -10,6 +10,9 @@
 #import "MBActionSheetView.h"
 #import "MBSmartVideoConverter.h"
 
+#define SCREEN_HEIGHT  [UIScreen mainScreen].bounds.size.height
+#define SCREEN_WIDTH   [UIScreen mainScreen].bounds.size.width
+#define RGBColor(r,g,b) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:1.0f]
 @interface MBPlaySmartVideoViewController ()<
 MBActionSheetDelegate
 >
@@ -18,6 +21,14 @@ MBActionSheetDelegate
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, strong) AVPlayerItem *item;
 
+// MARK: Header Controls
+@property (nonatomic, strong) UIView *headerView;
+@property (nonatomic, strong) UIButton *backButton;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UIButton *switchButton;
+
+
+// MARK: Bottom Controls
 @property (nonatomic, strong) UILabel *currentLabel;
 @property (nonatomic, strong) UISlider *slider;
 @property (nonatomic, strong) UILabel *durationLabel;
@@ -33,25 +44,43 @@ MBActionSheetDelegate
 @property (nonatomic, strong) id timeObserver;
 
 @property (nonatomic, strong) MBActionSheetView *sheetView;
+
+@property (nonatomic, assign) BOOL isHiddenBottom;
 @end
 
+#define kHEADERVIEW_HEIGHT 44
+#define kBOTTOMVIEW_HEIGHT 50
 @implementation MBPlaySmartVideoViewController
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.hidden = YES;
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [self.view addSubview:self.videoView];
     [self.view addSubview:self.bottomView];
+    [self.view addSubview:self.headerView];
     [self.bottomView addSubview:self.startButton];
     [self.bottomView addSubview:self.currentLabel];
     [self.bottomView addSubview:self.slider];
     [self.bottomView addSubview:self.durationLabel];
     [self.bottomView addSubview:self.functionButton];
     
- 
     CGFloat height = SCREEN_WIDTH * 0.747;
 
-    self.item = [AVPlayerItem playerItemWithURL:[NSURL URLWithString:self.videoUrlString]];
+    NSURL *url;
+    if ([self.videoUrlString hasPrefix:@"http"]) {
+        // 网络播放
+        url = [NSURL URLWithString:self.videoUrlString];
+    }else {
+        // 本地播放
+        url = [NSURL fileURLWithPath:self.videoUrlString];
+    }
+    self.item = [AVPlayerItem playerItemWithURL:url];
     self.player = [[AVPlayer alloc] initWithPlayerItem:self.item];
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer: self.player];
     self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
@@ -81,6 +110,10 @@ MBActionSheetDelegate
                                             selector:@selector(playerDidFinished:)
                                                 name:AVPlayerItemDidPlayToEndTimeNotification
                                               object:nil];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPlayer)];
+    [self.videoView addGestureRecognizer:tap];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -88,12 +121,42 @@ MBActionSheetDelegate
     // Dispose of any resources that can be recreated.
 }
 
+- (void)tapPlayer {
+    if (_isHiddenBottom) {
+        [self showBottomView];
+        [self hiddenBottomView];
+    }
+}
+
 #pragma mark - LazyInit
+- (UIView *)headerView {
+    if (!_headerView) {
+        _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, kHEADERVIEW_HEIGHT)];
+        _headerView.backgroundColor = [UIColor blackColor];
+        
+        self.backButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        [self.backButton setTitle:@"<" forState:UIControlStateNormal];
+        [self.backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [self.backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+        [self.backButton setFrame:CGRectMake(0, 0, kHEADERVIEW_HEIGHT, kHEADERVIEW_HEIGHT)];
+        [_headerView addSubview:self.backButton];
+        
+        self.switchButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        [self.switchButton setTitle:@"「」" forState:UIControlStateNormal];
+        [self.switchButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [self.switchButton addTarget:self action:@selector(switchAction) forControlEvents:UIControlEventTouchUpInside];
+        [self.switchButton setFrame:CGRectMake(SCREEN_WIDTH - kHEADERVIEW_HEIGHT, 0, kHEADERVIEW_HEIGHT, kHEADERVIEW_HEIGHT)];
+        [_headerView addSubview:self.switchButton];
+    }
+    return _headerView;
+}
+
+
 - (UIView *)videoView {
     if (!_videoView)
     {
-        _videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 50)];
-        _videoView.backgroundColor = [UIColor blackColor];
+        _videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - kBOTTOMVIEW_HEIGHT - kHEADERVIEW_HEIGHT)];
+        _videoView.backgroundColor = [UIColor orangeColor];
 
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];
         [_videoView addGestureRecognizer:tap];
@@ -104,7 +167,7 @@ MBActionSheetDelegate
 - (UIView *)bottomView {
     if (!_bottomView)
     {
-        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50)];
+        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - kBOTTOMVIEW_HEIGHT, SCREEN_WIDTH, kBOTTOMVIEW_HEIGHT)];
         _bottomView.backgroundColor = [UIColor blackColor];
         _bottomView.userInteractionEnabled = YES;
     }
@@ -118,7 +181,7 @@ MBActionSheetDelegate
         [_startButton addTarget:self action:@selector(starAction:) forControlEvents:UIControlEventTouchUpInside];
         [_startButton setImage:[UIImage imageNamed:@"smartVideo_play"] forState:UIControlStateNormal];
         [_startButton setImage:[UIImage imageNamed:@"smartVideo_pause"] forState:UIControlStateSelected];
-        [_startButton setFrame:CGRectMake(0, 0, 50, 50)];
+        [_startButton setFrame:CGRectMake(0, 0, kBOTTOMVIEW_HEIGHT, kBOTTOMVIEW_HEIGHT)];
     }
     return _startButton;
 }
@@ -192,7 +255,7 @@ MBActionSheetDelegate
     {
         _functionButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_functionButton setImage:[UIImage imageNamed:@"functionKeys"] forState:UIControlStateNormal];
-        [_functionButton setFrame:CGRectMake(SCREEN_WIDTH - 50, 0, 50, 50)];
+        [_functionButton setFrame:CGRectMake(SCREEN_WIDTH - 50, 0, 50, kBOTTOMVIEW_HEIGHT)];
         [_functionButton addTarget:self action:@selector(fuctionAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _functionButton;
@@ -329,6 +392,14 @@ MBActionSheetDelegate
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)back {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)switchAction {
+    NSLog(@"翻转");
+}
+
 #pragma mark - MBActionSheetDelegate
 - (void)mbActionSheet:(MBActionSheetView *)actionSheet clickItem:(ActionSheetButton *)item {
     ActionSheetModel *model = item.model;
@@ -401,6 +472,147 @@ MBActionSheetDelegate
             NSLog(@"mov写入失败");
         }
     }];
+}
+
+#pragma mark - asdf
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+//    NSLog(@"%s -- %ld", __FUNCTION__,(long)fromInterfaceOrientation);
+//    NSLog(@"%@", NSStringFromCGSize(self.view.frame.size)); //这里打印的size 还是横竖屏后的size，横竖屏动画结束后才进行调用
+}
+
+// 调用此方法时superview.bounds未改变
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+//        NSLog(@"%s --  %f", __FUNCTION__,duration); // 0.3s
+//        NSLog(@"%@", NSStringFromCGSize(self.view.frame.size)); //这里打印的size 还是未横竖屏时的size
+    NSLog(@"%@", NSStringFromCGRect(self.view.frame));
+    [self interfaceOrientation:toInterfaceOrientation];
+    [self updateLayoutBottomView:toInterfaceOrientation];
+    switch (toInterfaceOrientation) {
+        case UIInterfaceOrientationLandscapeLeft:
+        case UIInterfaceOrientationLandscapeRight:{
+            NSLog(@"右侧全屏");
+            [UIView animateWithDuration:duration animations:^{
+                self.videoView.frame = CGRectMake(0, 0, CGRectGetHeight(self.view.frame), CGRectGetWidth(self.view.frame));
+                self.playerLayer.frame = self.videoView.bounds;
+            }];
+        }
+            break;
+        case UIInterfaceOrientationPortrait:{
+            NSLog(@"竖立");
+            [UIView animateWithDuration:duration animations:^{
+                CGFloat height = SCREEN_WIDTH * 0.747;
+                self.videoView.frame = CGRectMake(0, 0, CGRectGetHeight(self.view.frame), CGRectGetWidth(self.view.frame) - 50);
+                self.playerLayer.bounds = CGRectMake(0, 0, CGRectGetHeight(self.view.frame), height);
+                self.playerLayer.position = CGPointMake(self.view.center.y, self.view.center.x);
+            }];
+        }
+        default:
+            break;
+    }
+}
+
+- (void)updateLayoutBottomView:(UIInterfaceOrientation)toInterfaceOrientation {
+    switch (toInterfaceOrientation) {
+        case UIInterfaceOrientationLandscapeLeft:
+        case UIInterfaceOrientationLandscapeRight:{
+            [UIView animateWithDuration:0.3 animations:^{
+                
+                CGRect slider = self.slider.frame;
+                slider.size = CGSizeMake(CGRectGetHeight(self.view.frame) - (90*2 + 20), 10);
+                self.slider.frame = slider;
+                
+                CGRect durationFrame = self.durationLabel.frame;
+                durationFrame.origin.x = self.slider.frame.origin.x + CGRectGetWidth(self.slider.frame);
+                self.durationLabel.frame = durationFrame;
+                
+                CGRect functionFrame = self.functionButton.frame;
+                functionFrame.origin.x = CGRectGetHeight(self.view.frame) - kBOTTOMVIEW_HEIGHT;
+                self.functionButton.frame = functionFrame;
+                
+                self.bottomView.frame = CGRectMake(0, CGRectGetWidth(self.view.frame) - kBOTTOMVIEW_HEIGHT, CGRectGetHeight(self.view.frame), kBOTTOMVIEW_HEIGHT);
+                
+                
+                self.headerView.frame = CGRectMake(0, 0, CGRectGetHeight(self.view.frame), kHEADERVIEW_HEIGHT);
+                CGRect switchRect = self.switchButton.frame;
+                switchRect.origin.x = CGRectGetWidth(self.headerView.frame) - kHEADERVIEW_HEIGHT;
+                self.switchButton.frame = switchRect;
+            }];
+            
+            [self hiddenBottomView];
+        }
+            break;
+        case UIInterfaceOrientationPortrait:{
+            [UIView animateWithDuration:0.3 animations:^{
+                
+                CGRect slider = self.slider.frame;
+                slider.size = CGSizeMake(CGRectGetHeight(self.view.frame) - (90*2 + 20), 10);
+                self.slider.frame = slider;
+                
+                CGRect durationFrame = self.durationLabel.frame;
+                durationFrame.origin.x = self.slider.frame.origin.x + CGRectGetWidth(self.slider.frame) ;
+                self.durationLabel.frame = durationFrame;
+                
+                CGRect functionFrame = self.functionButton.frame;
+                functionFrame.origin.x = CGRectGetHeight(self.view.frame) - kBOTTOMVIEW_HEIGHT;
+                self.functionButton.frame = functionFrame;
+                
+                self.bottomView.frame = CGRectMake(0, CGRectGetWidth(self.view.frame) - kBOTTOMVIEW_HEIGHT, CGRectGetHeight(self.view.frame), kBOTTOMVIEW_HEIGHT);
+                
+                self.headerView.frame = CGRectMake(0, 0, CGRectGetHeight(self.view.frame), kHEADERVIEW_HEIGHT);
+                CGRect switchRect = self.switchButton.frame;
+                switchRect.origin.x = CGRectGetWidth(self.headerView.frame) - kHEADERVIEW_HEIGHT;
+                self.switchButton.frame = switchRect;
+            }];
+        }
+        default:
+            break;
+    }
+}
+
+#pragma mark - hidden
+- (void)hiddenBottomView {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:0.3 animations:^{
+            CGRect rect = self.bottomView.frame;
+            rect.origin.y += rect.size.height;
+            self.bottomView.frame = rect;
+            
+            CGRect headerRect = self.headerView.frame;
+            headerRect.origin.y -= headerRect.size.height;
+            self.headerView.frame = headerRect;
+            
+            _isHiddenBottom = YES;
+        }];
+    });
+}
+
+- (void)showBottomView {
+    if (_isHiddenBottom) {
+        [UIView animateWithDuration:0.5 animations:^{
+            CGRect rect = self.bottomView.frame;
+            rect.origin.y -= rect.size.height;
+            self.bottomView.frame = rect;
+            
+            CGRect headerRect = self.headerView.frame;
+            headerRect.origin.y += headerRect.size.height;
+            self.headerView.frame = headerRect;
+        }];
+    }
+    _isHiddenBottom = NO;
+}
+
+#pragma mark - 手势侧滑
+- (void)interfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
+    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft|
+        toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+            self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+        }
+    }else {
+        if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+            self.navigationController.interactivePopGestureRecognizer.enabled = YES;
+        }
+    }
 }
 
 #pragma mark -

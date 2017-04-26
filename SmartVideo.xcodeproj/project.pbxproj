@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD69C99E49424DF85EEA2E72 /* Pods_SmartVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 734305D3B579EAEC95E07C8D /* Pods_SmartVideo.framework */; };
 		D11261411E05344E00792264 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D11261401E05344E00792264 /* main.m */; };
 		D11261441E05344E00792264 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D11261431E05344E00792264 /* AppDelegate.m */; };
 		D112614A1E05344E00792264 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D11261481E05344E00792264 /* Main.storyboard */; };
@@ -34,10 +35,15 @@
 		D140CF7C1E1E4FAC00BABA31 /* smartVideo_arrow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D140CF7A1E1E4FAC00BABA31 /* smartVideo_arrow@3x.png */; };
 		D140CF7F1E1E4FD800BABA31 /* functionKeys@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D140CF7D1E1E4FD800BABA31 /* functionKeys@2x.png */; };
 		D140CF801E1E4FD800BABA31 /* functionKeys@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D140CF7E1E1E4FD800BABA31 /* functionKeys@3x.png */; };
+		D14265951EADE47000463958 /* DownLoadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D14265941EADE47000463958 /* DownLoadManager.m */; };
+		D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */ = {isa = PBXBuildFile; fileRef = D14265981EAE08DD00463958 /* HUBProcessView.m */; };
 		D16B0A8C1E077B0D0009E6BB /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D16B0A8B1E077B0D0009E6BB /* AssetsLibrary.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		734305D3B579EAEC95E07C8D /* Pods_SmartVideo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SmartVideo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7B3BC0D9AD1E4B30F366E1 /* Pods-SmartVideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartVideo.release.xcconfig"; path = "Pods/Target Support Files/Pods-SmartVideo/Pods-SmartVideo.release.xcconfig"; sourceTree = "<group>"; };
+		CC47014F2C82A0FBF2993EB5 /* Pods-SmartVideo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartVideo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SmartVideo/Pods-SmartVideo.debug.xcconfig"; sourceTree = "<group>"; };
 		D112613C1E05344E00792264 /* SmartVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D11261401E05344E00792264 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D11261421E05344E00792264 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -76,6 +82,10 @@
 		D140CF7A1E1E4FAC00BABA31 /* smartVideo_arrow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smartVideo_arrow@3x.png"; sourceTree = "<group>"; };
 		D140CF7D1E1E4FD800BABA31 /* functionKeys@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "functionKeys@2x.png"; sourceTree = "<group>"; };
 		D140CF7E1E1E4FD800BABA31 /* functionKeys@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "functionKeys@3x.png"; sourceTree = "<group>"; };
+		D14265931EADE47000463958 /* DownLoadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownLoadManager.h; sourceTree = "<group>"; };
+		D14265941EADE47000463958 /* DownLoadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownLoadManager.m; sourceTree = "<group>"; };
+		D14265971EAE08DD00463958 /* HUBProcessView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HUBProcessView.h; sourceTree = "<group>"; };
+		D14265981EAE08DD00463958 /* HUBProcessView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HUBProcessView.m; sourceTree = "<group>"; };
 		D16B0A8B1E077B0D0009E6BB /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		D16B0A8D1E077FDD0009E6BB /* Macro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Macro.h; sourceTree = "<group>"; };
 		D16B0A8E1E077FE90009E6BB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
@@ -89,18 +99,29 @@
 				D140CF501E1E40D500BABA31 /* MobileCoreServices.framework in Frameworks */,
 				D16B0A8C1E077B0D0009E6BB /* AssetsLibrary.framework in Frameworks */,
 				D112615B1E0538EF00792264 /* AVFoundation.framework in Frameworks */,
+				CD69C99E49424DF85EEA2E72 /* Pods_SmartVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		082E1D7D3753303E1DCB3EEA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CC47014F2C82A0FBF2993EB5 /* Pods-SmartVideo.debug.xcconfig */,
+				9C7B3BC0D9AD1E4B30F366E1 /* Pods-SmartVideo.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		D11261331E05344E00792264 = {
 			isa = PBXGroup;
 			children = (
 				D112613E1E05344E00792264 /* SmartVideo */,
 				D112613D1E05344E00792264 /* Products */,
 				D11261591E0538EF00792264 /* Frameworks */,
+				082E1D7D3753303E1DCB3EEA /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -115,6 +136,8 @@
 		D112613E1E05344E00792264 /* SmartVideo */ = {
 			isa = PBXGroup;
 			children = (
+				D14265961EAE075700463958 /* View */,
+				D14265921EADE45B00463958 /* DownLoadManager */,
 				D140CF641E1E48FF00BABA31 /* Images */,
 				D140CF541E1E421A00BABA31 /* Tool */,
 				D140CF401E1E366500BABA31 /* ActionSheetView */,
@@ -148,6 +171,7 @@
 				D140CF4F1E1E40D500BABA31 /* MobileCoreServices.framework */,
 				D16B0A8B1E077B0D0009E6BB /* AssetsLibrary.framework */,
 				D112615A1E0538EF00792264 /* AVFoundation.framework */,
+				734305D3B579EAEC95E07C8D /* Pods_SmartVideo.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -206,6 +230,24 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
+		D14265921EADE45B00463958 /* DownLoadManager */ = {
+			isa = PBXGroup;
+			children = (
+				D14265931EADE47000463958 /* DownLoadManager.h */,
+				D14265941EADE47000463958 /* DownLoadManager.m */,
+			);
+			path = DownLoadManager;
+			sourceTree = "<group>";
+		};
+		D14265961EAE075700463958 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D14265971EAE08DD00463958 /* HUBProcessView.h */,
+				D14265981EAE08DD00463958 /* HUBProcessView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -213,9 +255,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D11261531E05344E00792264 /* Build configuration list for PBXNativeTarget "SmartVideo" */;
 			buildPhases = (
+				1F8B2DD37A45921BBAF357AA /* [CP] Check Pods Manifest.lock */,
 				D11261381E05344E00792264 /* Sources */,
 				D11261391E05344E00792264 /* Frameworks */,
 				D112613A1E05344E00792264 /* Resources */,
+				1A30EC3B7F9BA17434809266 /* [CP] Embed Pods Frameworks */,
+				5C56E55318FD3602469CB81E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -237,7 +282,7 @@
 				TargetAttributes = {
 					D112613B1E05344E00792264 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = P36C9Q8TAF;
+						DevelopmentTeam = 5QM6X2349E;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -285,14 +330,64 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1A30EC3B7F9BA17434809266 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartVideo/Pods-SmartVideo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1F8B2DD37A45921BBAF357AA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5C56E55318FD3602469CB81E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartVideo/Pods-SmartVideo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		D11261381E05344E00792264 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				D140CF3B1E1E343800BABA31 /* MBPlaySmartVideoViewController.m in Sources */,
+				D14265951EADE47000463958 /* DownLoadManager.m in Sources */,
 				D140CF3D1E1E343800BABA31 /* MBSmartVideoRecorder.m in Sources */,
 				D140CF2F1E1E338100BABA31 /* SmartViewController.m in Sources */,
+				D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */,
 				D140CF3E1E1E343800BABA31 /* MBSmartVideoWriter.m in Sources */,
 				D140CF3F1E1E343800BABA31 /* MBSmartVideoView.m in Sources */,
 				D11261441E05344E00792264 /* AppDelegate.m in Sources */,
@@ -415,9 +510,10 @@
 		};
 		D11261541E05344E00792264 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC47014F2C82A0FBF2993EB5 /* Pods-SmartVideo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = P36C9Q8TAF;
+				DEVELOPMENT_TEAM = 5QM6X2349E;
 				GCC_PREFIX_HEADER = SmartVideo/PrefixHeader.pch;
 				INFOPLIST_FILE = SmartVideo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -429,9 +525,10 @@
 		};
 		D11261551E05344E00792264 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C7B3BC0D9AD1E4B30F366E1 /* Pods-SmartVideo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = P36C9Q8TAF;
+				DEVELOPMENT_TEAM = 5QM6X2349E;
 				GCC_PREFIX_HEADER = SmartVideo/PrefixHeader.pch;
 				INFOPLIST_FILE = SmartVideo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
