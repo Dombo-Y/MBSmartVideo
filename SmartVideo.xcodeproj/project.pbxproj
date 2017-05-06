@@ -38,6 +38,8 @@
 		D14265951EADE47000463958 /* DownLoadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D14265941EADE47000463958 /* DownLoadManager.m */; };
 		D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */ = {isa = PBXBuildFile; fileRef = D14265981EAE08DD00463958 /* HUBProcessView.m */; };
 		D16B0A8C1E077B0D0009E6BB /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D16B0A8B1E077B0D0009E6BB /* AssetsLibrary.framework */; };
+		D1BADDE81EBC7752008D4D60 /* WXSmartVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BADDE71EBC7752008D4D60 /* WXSmartVideoView.m */; };
+		D1BADDEB1EBC7774008D4D60 /* WXSmartVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BADDEA1EBC7774008D4D60 /* WXSmartVideoControlView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +91,10 @@
 		D16B0A8B1E077B0D0009E6BB /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		D16B0A8D1E077FDD0009E6BB /* Macro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Macro.h; sourceTree = "<group>"; };
 		D16B0A8E1E077FE90009E6BB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		D1BADDE61EBC7752008D4D60 /* WXSmartVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXSmartVideoView.h; sourceTree = "<group>"; };
+		D1BADDE71EBC7752008D4D60 /* WXSmartVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoView.m; sourceTree = "<group>"; };
+		D1BADDE91EBC7774008D4D60 /* WXSmartVideoControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXSmartVideoControlView.h; sourceTree = "<group>"; };
+		D1BADDEA1EBC7774008D4D60 /* WXSmartVideoControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoControlView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +195,10 @@
 				D140CF381E1E343800BABA31 /* MBSmartVideoWriter.m */,
 				D140CF391E1E343800BABA31 /* MBSmartVideoView.h */,
 				D140CF3A1E1E343800BABA31 /* MBSmartVideoView.m */,
+				D1BADDE61EBC7752008D4D60 /* WXSmartVideoView.h */,
+				D1BADDE71EBC7752008D4D60 /* WXSmartVideoView.m */,
+				D1BADDE91EBC7774008D4D60 /* WXSmartVideoControlView.h */,
+				D1BADDEA1EBC7774008D4D60 /* WXSmartVideoControlView.m */,
 			);
 			path = SmartVideoManager;
 			sourceTree = "<group>";
@@ -386,6 +396,7 @@
 				D140CF3B1E1E343800BABA31 /* MBPlaySmartVideoViewController.m in Sources */,
 				D14265951EADE47000463958 /* DownLoadManager.m in Sources */,
 				D140CF3D1E1E343800BABA31 /* MBSmartVideoRecorder.m in Sources */,
+				D1BADDE81EBC7752008D4D60 /* WXSmartVideoView.m in Sources */,
 				D140CF2F1E1E338100BABA31 /* SmartViewController.m in Sources */,
 				D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */,
 				D140CF3E1E1E343800BABA31 /* MBSmartVideoWriter.m in Sources */,
@@ -393,6 +404,7 @@
 				D11261441E05344E00792264 /* AppDelegate.m in Sources */,
 				D140CF431E1E366500BABA31 /* MBActionSheetView.m in Sources */,
 				D140CF3C1E1E343800BABA31 /* MBSmartVideoConverter.m in Sources */,
+				D1BADDEB1EBC7774008D4D60 /* WXSmartVideoControlView.m in Sources */,
 				D11261411E05344E00792264 /* main.m in Sources */,
 				D140CF5A1E1E425400BABA31 /* UIColor+UIImage.m in Sources */,
 			);

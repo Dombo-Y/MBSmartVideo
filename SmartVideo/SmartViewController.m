@@ -11,6 +11,7 @@
 #import "MBPlaySmartVideoViewController.h"
 #import "DownLoadManager.h"
 #import "HUBProcessView.h"
+#import "WXSmartVideoView.h"
 @interface SmartViewController ()
 
 @property (nonatomic, copy) NSString *videoUrll;
@@ -21,6 +22,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *RecordingBtn;
 @property (strong, nonatomic) IBOutlet UIButton *playingBtn;
 @property (strong, nonatomic) IBOutlet UIButton *downloadingBtn;
+@property (strong, nonatomic) IBOutlet UIButton *wxSmartVideoBtn;
 
 @property (nonatomic, strong) UIView *tempView;
 
@@ -72,7 +74,7 @@
     UIInterfaceOrientation currentOrient = [UIApplication  sharedApplication].statusBarOrientation;
     NSLog(@"currentOrient == %ld", (long)currentOrient);
     if (![self isSimulator]) {
-        MBSmartVideoView *smart = [[MBSmartVideoView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        MBSmartVideoView *smart = [[MBSmartVideoView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
         NSLog(@".frame == %@", NSStringFromCGRect(smart.frame));
         [self.navigationController.view addSubview:smart];
         __weak __typeof(&*self)weakSelf = self;
@@ -85,6 +87,15 @@
     }
 }
 
+- (IBAction)wxSmartVideo:(UIButton *)sender {
+    if (![self isSimulator]) {
+        NSLog(@"小视频全屏录制");
+        WXSmartVideoView *wxsmartView = [[WXSmartVideoView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        [self.navigationController.view addSubview:wxsmartView];
+    }else {
+        NSLog(@"模拟器不支持小视频录制");
+    }
+}
 
 - (IBAction)playVideo:(UIButton *)sender {
     if (self.videoUrll.length >0)
@@ -146,6 +157,7 @@
         CGRect recordRect = self.RecordingBtn.frame;
         CGRect playRect = self.playingBtn.frame;
         CGRect downloadRect = self.downloadingBtn.frame;
+        CGRect wxSVRect = self.wxSmartVideoBtn.frame;
         CGFloat width = (CGRectGetHeight(self.view.frame) - 60) / 3;
         recordRect.size.width = width;
         playRect.size.width = width;
@@ -155,6 +167,8 @@
         self.RecordingBtn.frame = recordRect;
         self.playingBtn.frame = playRect;
         self.downloadingBtn.frame = downloadRect;
+        wxSVRect.size.width = CGRectGetHeight(self.view.frame);
+        self.wxSmartVideoBtn.frame = wxSVRect;
     }];
     
     switch (toInterfaceOrientation) {

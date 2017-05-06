@@ -156,8 +156,7 @@ MBActionSheetDelegate
     if (!_videoView)
     {
         _videoView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - kBOTTOMVIEW_HEIGHT - kHEADERVIEW_HEIGHT)];
-        _videoView.backgroundColor = [UIColor orangeColor];
-
+        _videoView.backgroundColor = [UIColor blackColor];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];
         [_videoView addGestureRecognizer:tap];
     }

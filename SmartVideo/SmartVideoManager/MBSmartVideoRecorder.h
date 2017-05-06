@@ -32,14 +32,17 @@ typedef void (^FinishRecordingBlock)(NSDictionary *info, RecorderFinishedReason 
 @property (nonatomic, strong) NSURL *recordURL;//!< 本地视频地址
 
 //=== setup
+/***/
 - (void)setup;
 
-- (void)startSession; // 开启摄像头
-- (void)stopSession; // 关闭摄像头
+- (void)startSession; /*开启摄像头**/
+- (void)stopSession; /* 关闭摄像头**/
 
-- (void)startCapture; // 开始视频捕捉
-- (void)stopCapture; // 结束视频捕捉
-- (void)cancelCapture; // 取消视频捕捉
+- (void)startCapture; /*开始视频捕捉**/
+- (void)stopCapture; /*结束视频捕捉**/
+- (void)cancelCapture; /*取消视频捕捉**/
 
-- (BOOL)setScaleFactor:(CGFloat)factor;// 设置缩放比例
+- (void)swapFrontAndBackCameras; /*摄像头翻转**/
+
+- (BOOL)setScaleFactor:(CGFloat)factor;/***/// 设置缩放比例
 @end
