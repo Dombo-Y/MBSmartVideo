@@ -17,5 +17,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIKit.h>
-#import "UIColor+UIImage.h"
+#import "UIColor+Category.h"
+#import "UIView+Category.h"
+
 #endif /* PrefixHeader_pch */

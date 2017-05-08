@@ -22,7 +22,7 @@
 		D140CF3F1E1E343800BABA31 /* MBSmartVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = D140CF3A1E1E343800BABA31 /* MBSmartVideoView.m */; };
 		D140CF431E1E366500BABA31 /* MBActionSheetView.m in Sources */ = {isa = PBXBuildFile; fileRef = D140CF421E1E366500BABA31 /* MBActionSheetView.m */; };
 		D140CF501E1E40D500BABA31 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D140CF4F1E1E40D500BABA31 /* MobileCoreServices.framework */; };
-		D140CF5A1E1E425400BABA31 /* UIColor+UIImage.m in Sources */ = {isa = PBXBuildFile; fileRef = D140CF591E1E425400BABA31 /* UIColor+UIImage.m */; };
+		D140CF5A1E1E425400BABA31 /* UIColor+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = D140CF591E1E425400BABA31 /* UIColor+Category.m */; };
 		D140CF6F1E1E48FF00BABA31 /* smartVideo_eye@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D140CF651E1E48FF00BABA31 /* smartVideo_eye@2x.png */; };
 		D140CF701E1E48FF00BABA31 /* smartVideo_eye@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = D140CF661E1E48FF00BABA31 /* smartVideo_eye@3x.png */; };
 		D140CF711E1E48FF00BABA31 /* smartVideo_pause@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D140CF671E1E48FF00BABA31 /* smartVideo_pause@2x.png */; };
@@ -39,7 +39,10 @@
 		D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */ = {isa = PBXBuildFile; fileRef = D14265981EAE08DD00463958 /* HUBProcessView.m */; };
 		D16B0A8C1E077B0D0009E6BB /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D16B0A8B1E077B0D0009E6BB /* AssetsLibrary.framework */; };
 		D1BADDE81EBC7752008D4D60 /* WXSmartVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BADDE71EBC7752008D4D60 /* WXSmartVideoView.m */; };
-		D1BADDEB1EBC7774008D4D60 /* WXSmartVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BADDEA1EBC7774008D4D60 /* WXSmartVideoControlView.m */; };
+		D1BADDEB1EBC7774008D4D60 /* WXSmartVideoBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BADDEA1EBC7774008D4D60 /* WXSmartVideoBottomView.m */; };
+		D1BAE69A1EC00950008D4D60 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1BAE6991EC00950008D4D60 /* Images.xcassets */; };
+		D1BAE69D1EC00DC9008D4D60 /* WXSmartVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE69C1EC00DC9008D4D60 /* WXSmartVideoControlView.m */; };
+		D1BAE6A31EC013CA008D4D60 /* UIView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6A21EC013CA008D4D60 /* UIView+Category.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,8 +73,8 @@
 		D140CF411E1E366500BABA31 /* MBActionSheetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBActionSheetView.h; sourceTree = "<group>"; };
 		D140CF421E1E366500BABA31 /* MBActionSheetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBActionSheetView.m; sourceTree = "<group>"; };
 		D140CF4F1E1E40D500BABA31 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		D140CF581E1E425400BABA31 /* UIColor+UIImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+UIImage.h"; sourceTree = "<group>"; };
-		D140CF591E1E425400BABA31 /* UIColor+UIImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+UIImage.m"; sourceTree = "<group>"; };
+		D140CF581E1E425400BABA31 /* UIColor+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Category.h"; sourceTree = "<group>"; };
+		D140CF591E1E425400BABA31 /* UIColor+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Category.m"; sourceTree = "<group>"; };
 		D140CF651E1E48FF00BABA31 /* smartVideo_eye@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smartVideo_eye@2x.png"; sourceTree = "<group>"; };
 		D140CF661E1E48FF00BABA31 /* smartVideo_eye@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smartVideo_eye@3x.png"; sourceTree = "<group>"; };
 		D140CF671E1E48FF00BABA31 /* smartVideo_pause@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "smartVideo_pause@2x.png"; sourceTree = "<group>"; };
@@ -93,8 +96,13 @@
 		D16B0A8E1E077FE90009E6BB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		D1BADDE61EBC7752008D4D60 /* WXSmartVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXSmartVideoView.h; sourceTree = "<group>"; };
 		D1BADDE71EBC7752008D4D60 /* WXSmartVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoView.m; sourceTree = "<group>"; };
-		D1BADDE91EBC7774008D4D60 /* WXSmartVideoControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXSmartVideoControlView.h; sourceTree = "<group>"; };
-		D1BADDEA1EBC7774008D4D60 /* WXSmartVideoControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoControlView.m; sourceTree = "<group>"; };
+		D1BADDE91EBC7774008D4D60 /* WXSmartVideoBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXSmartVideoBottomView.h; sourceTree = "<group>"; };
+		D1BADDEA1EBC7774008D4D60 /* WXSmartVideoBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoBottomView.m; sourceTree = "<group>"; };
+		D1BAE6991EC00950008D4D60 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D1BAE69B1EC00DC9008D4D60 /* WXSmartVideoControlView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXSmartVideoControlView.h; sourceTree = "<group>"; };
+		D1BAE69C1EC00DC9008D4D60 /* WXSmartVideoControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoControlView.m; sourceTree = "<group>"; };
+		D1BAE6A11EC013CA008D4D60 /* UIView+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Category.h"; sourceTree = "<group>"; };
+		D1BAE6A21EC013CA008D4D60 /* UIView+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Category.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +162,7 @@
 				D140CF2E1E1E338100BABA31 /* SmartViewController.m */,
 				D16B0A8D1E077FDD0009E6BB /* Macro.h */,
 				D16B0A8E1E077FE90009E6BB /* PrefixHeader.pch */,
+				D1BAE6991EC00950008D4D60 /* Images.xcassets */,
 				D11261481E05344E00792264 /* Main.storyboard */,
 				D112614B1E05344E00792264 /* Assets.xcassets */,
 				D112614D1E05344E00792264 /* LaunchScreen.storyboard */,
@@ -197,8 +206,10 @@
 				D140CF3A1E1E343800BABA31 /* MBSmartVideoView.m */,
 				D1BADDE61EBC7752008D4D60 /* WXSmartVideoView.h */,
 				D1BADDE71EBC7752008D4D60 /* WXSmartVideoView.m */,
-				D1BADDE91EBC7774008D4D60 /* WXSmartVideoControlView.h */,
-				D1BADDEA1EBC7774008D4D60 /* WXSmartVideoControlView.m */,
+				D1BADDE91EBC7774008D4D60 /* WXSmartVideoBottomView.h */,
+				D1BADDEA1EBC7774008D4D60 /* WXSmartVideoBottomView.m */,
+				D1BAE69B1EC00DC9008D4D60 /* WXSmartVideoControlView.h */,
+				D1BAE69C1EC00DC9008D4D60 /* WXSmartVideoControlView.m */,
 			);
 			path = SmartVideoManager;
 			sourceTree = "<group>";
@@ -215,8 +226,10 @@
 		D140CF541E1E421A00BABA31 /* Tool */ = {
 			isa = PBXGroup;
 			children = (
-				D140CF581E1E425400BABA31 /* UIColor+UIImage.h */,
-				D140CF591E1E425400BABA31 /* UIColor+UIImage.m */,
+				D140CF581E1E425400BABA31 /* UIColor+Category.h */,
+				D140CF591E1E425400BABA31 /* UIColor+Category.m */,
+				D1BAE6A11EC013CA008D4D60 /* UIView+Category.h */,
+				D1BAE6A21EC013CA008D4D60 /* UIView+Category.m */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
@@ -321,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D112614F1E05344E00792264 /* LaunchScreen.storyboard in Resources */,
+				D1BAE69A1EC00950008D4D60 /* Images.xcassets in Resources */,
 				D140CF7C1E1E4FAC00BABA31 /* smartVideo_arrow@3x.png in Resources */,
 				D140CF7F1E1E4FD800BABA31 /* functionKeys@2x.png in Resources */,
 				D112614C1E05344E00792264 /* Assets.xcassets in Resources */,
@@ -393,10 +407,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1BAE6A31EC013CA008D4D60 /* UIView+Category.m in Sources */,
 				D140CF3B1E1E343800BABA31 /* MBPlaySmartVideoViewController.m in Sources */,
 				D14265951EADE47000463958 /* DownLoadManager.m in Sources */,
 				D140CF3D1E1E343800BABA31 /* MBSmartVideoRecorder.m in Sources */,
 				D1BADDE81EBC7752008D4D60 /* WXSmartVideoView.m in Sources */,
+				D1BAE69D1EC00DC9008D4D60 /* WXSmartVideoControlView.m in Sources */,
 				D140CF2F1E1E338100BABA31 /* SmartViewController.m in Sources */,
 				D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */,
 				D140CF3E1E1E343800BABA31 /* MBSmartVideoWriter.m in Sources */,
@@ -404,9 +420,9 @@
 				D11261441E05344E00792264 /* AppDelegate.m in Sources */,
 				D140CF431E1E366500BABA31 /* MBActionSheetView.m in Sources */,
 				D140CF3C1E1E343800BABA31 /* MBSmartVideoConverter.m in Sources */,
-				D1BADDEB1EBC7774008D4D60 /* WXSmartVideoControlView.m in Sources */,
+				D1BADDEB1EBC7774008D4D60 /* WXSmartVideoBottomView.m in Sources */,
 				D11261411E05344E00792264 /* main.m in Sources */,
-				D140CF5A1E1E425400BABA31 /* UIColor+UIImage.m in Sources */,
+				D140CF5A1E1E425400BABA31 /* UIColor+Category.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

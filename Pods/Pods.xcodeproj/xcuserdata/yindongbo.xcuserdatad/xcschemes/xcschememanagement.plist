@@ -9,6 +9,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>GPUImage.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>HappyDNS.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -27,12 +32,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>21416B1C9D4C125F873C664032F22E0B</key>
+		<key>1F42E1A14BD265FC70F5496F787262B6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9D262DCE0A72DC2BEE2CC81814152102</key>
+		<key>2597E77C6D3830202BFB48C276629F0A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2837DB0C5A4FC0C9E7EBAEF09A61E676</key>
 		<dict>
 			<key>primary</key>
 			<true/>

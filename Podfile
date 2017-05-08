@@ -5,4 +5,5 @@ target 'SmartVideo' do
 
   pod ‘AFNetworking’
   pod 'Qiniu', '~> 7.1.5'
+  pod 'GPUImage', '~> 0.1.7'
 end
