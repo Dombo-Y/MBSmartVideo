@@ -45,6 +45,9 @@
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
         [_centerView addGestureRecognizer:longPress];
         
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
+        [_centerView addGestureRecognizer:tap];
+        
         _width = 5;
         _progress = 0.0f;
         
@@ -94,6 +97,13 @@
             break;
         default:
             break;
+    }
+}
+
+- (void)tapAction:(UIGestureRecognizer *)gest {
+    NSLog(@"点击 %@",[gest class]);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(smartVideoControl:gestureRecognizer:)]) {
+        [self.delegate smartVideoControl:self gestureRecognizer:gest];
     }
 }
 

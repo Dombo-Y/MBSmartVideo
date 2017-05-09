@@ -15,6 +15,8 @@
 
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView isRecording:(BOOL)recording;
 
+- (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView captureCurrentFrame:(BOOL)capture;
+
 @end
 
 @interface WXSmartVideoBottomView : UIView

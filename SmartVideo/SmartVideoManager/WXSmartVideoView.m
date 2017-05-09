@@ -12,6 +12,7 @@
 
 #import "GPUImage.h"
 #import "GPUImageSketchFilter.h"
+#import "GPUImageBeautifyFilter.h"
 
 #import <AssetsLibrary/ALAssetsLibrary.h>
 @interface WXSmartVideoView()<
@@ -24,11 +25,16 @@ WXSmartVideoDelegate
 
 @property (nonatomic, strong) MBSmartVideoRecorder *recorder;
 
-@property (nonatomic, strong) GPUImageVideoCamera *videoCamera;
-//@property (nonatomic, strong) GPUImageView *filterView;
-@property (nonatomic, strong) GPUImageMovieWriter *writer;
+//@property (nonatomic, strong) GPUImageVideoCamera *videoCamera;
+//GPUImageVideoCamera仅能录像， GPUImageStillCamera 可拍照可录像，继承于GPUImageVideoCamera
+@property (nonatomic, strong) GPUImageStillCamera *camera;
 
-@property (nonatomic, strong) GPUImageSobelEdgeDetectionFilter *filter;
+@property (nonatomic, strong) GPUImageMovieWriter *writer;
+@property (nonatomic, strong) GPUImageBeautifyFilter *beautifyFilter;
+
+@property (nonatomic, strong) NSURL *videoUrl;
+
+@property (nonatomic, assign) BOOL savingImg;
 @end
 
 #define kMAXDURATION 6
@@ -42,41 +48,10 @@ WXSmartVideoDelegate
         self.backgroundColor = [UIColor blackColor];
         
         if (kFaceSmartVideo) {
-            NSLog(@"美颜");
-            self.videoCamera = [[GPUImageVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset640x480 cameraPosition:AVCaptureDevicePositionFront];
-            self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
-            self.videoCamera.horizontallyMirrorFrontFacingCamera = YES;
-//            self.videoCamera.horizontallyMirrorRearFacingCamera = YES;
-            
-            GPUImageView *filterView = [[GPUImageView alloc] initWithFrame:frame];
-            filterView.fillMode = kGPUImageFillModePreserveAspectRatioAndFill;
-            [self.videoCamera addTarget:filterView];
-            [self addSubview:filterView];
-            
-//            GPUImageSepiaFilter *filter = [[GPUImageSepiaFilter alloc] init];
-//            GPUImageSketchFilter *filter = [[GPUImageSketchFilter alloc] init];
-//            _filter = filter;
-//            [self.videoCamera addTarget:_filter];
-            
-//            NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie.m4v"];
-//            NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
-//            _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(480.0, 640.0)];
-//            _writer.encodingLiveVideo = YES;
-            
-//            [_filter addTarget:filterView];
-//            [_filter addTarget:_writer];
- 
-            [self.videoCamera startCameraCapture];
+            [self faceSmartVideo]; NSLog(@"美颜");
         }
         else {
-            NSLog(@"普通");
-            [self addSubview:self.preview];
-            [self configRecorder];
-            [self.recorder setup];
-            [self configCaptureUI];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.recorder startSession];
-            });
+            [self normalSmartVideo]; NSLog(@"普通");
         }
         
         [self addSubview:self.invertBtn];
@@ -92,9 +67,15 @@ WXSmartVideoDelegate
         [_invertBtn setTitle:@"前置" forState:UIControlStateNormal];
         [_invertBtn setTitle:@"后置" forState:UIControlStateSelected];
         [_invertBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        
         [_invertBtn addTarget:self action:@selector(InvertShot:) forControlEvents:UIControlEventTouchUpInside];
         _invertBtn.frame = CGRectMake(SCREEN_WIDTH - 60, 10, 50, 50);
+        
+        CALayer *layer = [[CALayer alloc] init];
+        layer.frame = _invertBtn.bounds;
+        layer.backgroundColor = [UIColor blackColor].CGColor;
+        layer.opacity = 0.7;
+        layer.cornerRadius = layer.frame.size.width/2;
+        [_invertBtn.layer addSublayer:layer];
     }
     return _invertBtn;
 }
@@ -120,10 +101,42 @@ WXSmartVideoDelegate
     return _preview;
 }
 
+- (NSURL *)videoUrl {
+    if (!_videoUrl) {
+        NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie1.m4v"];
+        _videoUrl = [NSURL URLWithString:pathToMovie];
+        unlink([pathToMovie UTF8String]);
+    }
+    return _videoUrl;
+}
+
+- (GPUImageMovieWriter *)writer {
+    if (!_writer) {
+        _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:self.videoUrl size:self.size];
+        _writer.encodingLiveVideo = YES;
+    }
+    return _writer;
+}
+
+- (GPUImageStillCamera *)camera {
+    if (!_camera) {
+        self.camera = [[GPUImageStillCamera alloc] initWithSessionPreset:AVCaptureSessionPreset640x480 cameraPosition:AVCaptureDevicePositionBack];
+        self.camera.outputImageOrientation = UIInterfaceOrientationPortrait;
+        self.camera.horizontallyMirrorFrontFacingCamera = YES; // 前置摄像头需要 镜像反转
+        self.camera.horizontallyMirrorRearFacingCamera = NO; // 后置摄像头不需要 镜像反转 （default：NO）
+        [self.camera addAudioInputsAndOutputs]; //该句可防止允许声音通过的情况下，避免录制第一帧黑屏闪屏
+    }
+    return _camera;
+}
+
 #pragma mark - ActionMethod
 - (void)InvertShot:(UIButton *)btn {
     btn.selected = !btn.selected;
-    [self.recorder swapFrontAndBackCameras];
+    if (kFaceSmartVideo) {
+        [self.camera rotateCamera];
+    }else {
+        [self.recorder swapFrontAndBackCameras];
+    }
 }
 
 #pragma mark - configRecorder
@@ -167,6 +180,32 @@ WXSmartVideoDelegate
     [self.preview.layer  addSublayer:tempLayer];
 }
 
+#pragma mark - VideoConfig
+- (void)faceSmartVideo {
+    GPUImageView *filterView = [[GPUImageView alloc] initWithFrame:self.bounds];
+    [self addSubview:filterView];
+    [self.camera addTarget:filterView];
+    [self.camera startCameraCapture];
+    filterView.fillMode = 2;
+    
+#warning 这是一个坑
+    [self.camera removeAllTargets]; // 这句很重要！！ 否则添加滤镜会闪屏
+    
+    _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
+    [self.camera addTarget:_beautifyFilter];
+    [_beautifyFilter addTarget:filterView];
+}
+
+- (void)normalSmartVideo {
+    [self addSubview:self.preview];
+    [self configRecorder];
+    [self.recorder setup];
+    [self configCaptureUI];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.recorder startSession];
+    });
+}
+
 #pragma  mark - WXSmartVideoDelegate
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView zoomLens:(CGFloat)scaleNum {
 //    [self.recorder setScaleFactor:scaleNum];
@@ -176,20 +215,88 @@ WXSmartVideoDelegate
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView isRecording:(BOOL)recording {
     if (recording) {
         NSLog(@"开始录制");
-        self.videoCamera.audioEncodingTarget = _writer;
-        [_writer startRecording];
+        [self startRecording];
     }else {
-        self.videoCamera.audioEncodingTarget = nil;
-        [_writer finishRecording];
         NSLog(@"结束录制");
+        [self finishRecording];
+    }
+
+}
+
+- (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView captureCurrentFrame:(BOOL)capture {
+    if (capture && !_savingImg) {
+        NSLog(@"拍照");
+        [self writerCurrentFrameToLibrary];
     }
 }
-- (void)writerMove {
-    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie.m4v"];
-     NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
-    _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(480.0, 640.0)];
-    _writer.encodingLiveVideo = YES;
-    
-    
+
+- (void)startRecording {
+    if (kFaceSmartVideo) {
+        self.camera.audioEncodingTarget = _writer;
+        [_writer startRecording];
+    }else {
+        
+    }
 }
+
+- (void)finishRecording {
+    if (kFaceSmartVideo) {
+        self.camera.audioEncodingTarget = nil;
+        [_beautifyFilter removeTarget:_writer];
+        [_writer finishRecording];
+        [self writerVideoToLibrary];
+    }else {
+        
+    }
+}
+
+#pragma mark - Save 
+- (void)writerVideoToLibrary {
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    if ([library videoAtPathIsCompatibleWithSavedPhotosAlbum:self.videoUrl])
+    {
+        [library writeVideoAtPathToSavedPhotosAlbum:self.videoUrl completionBlock:^(NSURL *assetURL, NSError *error)
+         {
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 
+                 if (error) {
+                     [self showAlterViewTitle:@"失败" message:@"视频保存失败"];
+                 } else {
+                     [self showAlterViewTitle:@"成功" message:@"视频保存成功"];
+                 }
+             });
+         }];
+    }
+}
+
+- (void)writerCurrentFrameToLibrary {
+    _savingImg = YES;
+    [self.camera capturePhotoAsJPEGProcessedUpToFilter:_beautifyFilter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
+#warning 这是第二个坑，用这种方式保存照片到相册正常，否则会90度旋转
+        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        [library writeImageDataToSavedPhotosAlbum:processedJPEG metadata:self.camera.currentCaptureMetadata completionBlock:^(NSURL *assetURL, NSError *error2) {
+             UIImage *img = [UIImage imageWithData:processedJPEG];
+             if (img) {
+                 UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+             }
+         }];
+    }];
+}
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+    _savingImg = NO;
+    if (!error) {
+        [self showAlterViewTitle:@"成功" message:@"照片保存成功"];
+    }else {
+        [self showAlterViewTitle:@"失败" message:@"照片保存失败"];
+    }
+}
+
+#pragma mark - CustomMethod
+- (void)showAlterViewTitle:(NSString *)title message:(NSString *)message {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message
+                                                   delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+}
+
 @end

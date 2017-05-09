@@ -43,6 +43,7 @@
 		D1BAE69A1EC00950008D4D60 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1BAE6991EC00950008D4D60 /* Images.xcassets */; };
 		D1BAE69D1EC00DC9008D4D60 /* WXSmartVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE69C1EC00DC9008D4D60 /* WXSmartVideoControlView.m */; };
 		D1BAE6A31EC013CA008D4D60 /* UIView+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6A21EC013CA008D4D60 /* UIView+Category.m */; };
+		D1BAE6AC1EC153D8008D4D60 /* GPUImageBeautifyFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6AB1EC153D8008D4D60 /* GPUImageBeautifyFilter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,6 +104,8 @@
 		D1BAE69C1EC00DC9008D4D60 /* WXSmartVideoControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoControlView.m; sourceTree = "<group>"; };
 		D1BAE6A11EC013CA008D4D60 /* UIView+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Category.h"; sourceTree = "<group>"; };
 		D1BAE6A21EC013CA008D4D60 /* UIView+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Category.m"; sourceTree = "<group>"; };
+		D1BAE6AA1EC153D8008D4D60 /* GPUImageBeautifyFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImageBeautifyFilter.h; sourceTree = "<group>"; };
+		D1BAE6AB1EC153D8008D4D60 /* GPUImageBeautifyFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUImageBeautifyFilter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +153,7 @@
 		D112613E1E05344E00792264 /* SmartVideo */ = {
 			isa = PBXGroup;
 			children = (
+				D1BAE6A91EC153D8008D4D60 /* GPUImageFilter */,
 				D14265961EAE075700463958 /* View */,
 				D14265921EADE45B00463958 /* DownLoadManager */,
 				D140CF641E1E48FF00BABA31 /* Images */,
@@ -269,6 +273,15 @@
 				D14265981EAE08DD00463958 /* HUBProcessView.m */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		D1BAE6A91EC153D8008D4D60 /* GPUImageFilter */ = {
+			isa = PBXGroup;
+			children = (
+				D1BAE6AA1EC153D8008D4D60 /* GPUImageBeautifyFilter.h */,
+				D1BAE6AB1EC153D8008D4D60 /* GPUImageBeautifyFilter.m */,
+			);
+			path = GPUImageFilter;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -415,6 +428,7 @@
 				D1BAE69D1EC00DC9008D4D60 /* WXSmartVideoControlView.m in Sources */,
 				D140CF2F1E1E338100BABA31 /* SmartViewController.m in Sources */,
 				D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */,
+				D1BAE6AC1EC153D8008D4D60 /* GPUImageBeautifyFilter.m in Sources */,
 				D140CF3E1E1E343800BABA31 /* MBSmartVideoWriter.m in Sources */,
 				D140CF3F1E1E343800BABA31 /* MBSmartVideoView.m in Sources */,
 				D11261441E05344E00792264 /* AppDelegate.m in Sources */,

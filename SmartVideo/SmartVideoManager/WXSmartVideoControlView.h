@@ -12,6 +12,7 @@
 @protocol SmartVideoControlDelegate <NSObject>
 @required
 - (void)smartVideoControl:(WXSmartVideoControlView *)control gestureRecognizer:(UIGestureRecognizer *)gest;
+ 
 @end
 
 @interface WXSmartVideoControlView : UIView

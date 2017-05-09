@@ -58,6 +58,14 @@ SmartVideoControlDelegate
 }
 
 - (void)smartVideoControl:(WXSmartVideoControlView *)control gestureRecognizer:(UIGestureRecognizer *)gest {
+    
+    if ([NSStringFromClass([gest class]) isEqualToString:@"UITapGestureRecognizer"]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(wxSmartVideo:captureCurrentFrame:)]) {
+            [self.delegate wxSmartVideo:self captureCurrentFrame:YES];
+        }
+        return;
+    }
+    
     switch (gest.state) {
         case UIGestureRecognizerStateBegan:{
             _backBtn.hidden = YES;
@@ -71,7 +79,7 @@ SmartVideoControlDelegate
             CGPoint point = [gest locationInView:self];
 //            NSLog(@"point == %@", NSStringFromCGPoint(point));
             
-#warning 有问题
+#warning 焦距伸缩有问题
             if (point.y <0)
             { //  NSLog(@"伸缩");
                 if (_tempY - point.y> 0)
