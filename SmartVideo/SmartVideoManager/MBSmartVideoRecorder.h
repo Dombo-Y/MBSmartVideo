@@ -24,6 +24,10 @@ typedef void (^FinishRecordingBlock)(NSDictionary *info, RecorderFinishedReason 
 
 @property (nonatomic, copy)FinishRecordingBlock finishBlock;//录制结束
 
+
+// === 照相捕捉
+@property (nonatomic, strong) AVCaptureStillImageOutput *imageDataOutput;
+
 //=== 参数设置
 @property (nonatomic, assign) CGSize cropSize;//!< 视频捕捉画面宽高
 @property (nonatomic, assign) NSTimeInterval maxDuration;//视频最长时间

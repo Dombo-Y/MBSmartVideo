@@ -237,6 +237,7 @@ MBSmartVideoWriterDelegate
                 [self.session removeOutput:self.videoDataOutput];
             }
            
+            //MARK :视频输出
             self.videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
             self.videoDataOutput.videoSettings = @{(id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
             [self.videoDataOutput setSampleBufferDelegate:self queue:self.videoDataOutputQueue];
@@ -269,7 +270,13 @@ MBSmartVideoWriterDelegate
                 NSLog(@"无法添加视频输入到会话");
             }
             
+            // MARK：图片输出
+            self.imageDataOutput = [[AVCaptureStillImageOutput alloc] init];
+            if ([self.session canAddOutput:self.imageDataOutput]) {
+                [self.session addOutput:self.imageDataOutput];
+            }
             
+            // MARK :音频输出
             self.audioCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
             self.audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.audioCaptureDevice error:&error];
             if (self.audioDeviceInput)

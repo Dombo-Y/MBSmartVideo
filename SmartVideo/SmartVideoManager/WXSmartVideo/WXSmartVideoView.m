@@ -37,10 +37,9 @@ WXSmartVideoDelegate
 @property (nonatomic, assign) BOOL savingImg;
 @end
 
+
 #define kMAXDURATION 6
-
-
-#define kFaceSmartVideo 1
+#define kFaceSmartVideo 0
 @implementation WXSmartVideoView
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -103,8 +102,9 @@ WXSmartVideoDelegate
 
 - (NSURL *)videoUrl {
     if (!_videoUrl) {
-        NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie1.m4v"];
-        _videoUrl = [NSURL URLWithString:pathToMovie];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES);
+        NSString *pathToMovie = [paths objectAtIndex:0];
+        _videoUrl = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/aaa.mp4",pathToMovie]];
         unlink([pathToMovie UTF8String]);
     }
     return _videoUrl;
@@ -114,6 +114,9 @@ WXSmartVideoDelegate
     if (!_writer) {
         _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:self.videoUrl size:self.size];
         _writer.encodingLiveVideo = YES;
+        _writer.shouldPassthroughAudio = YES;
+        _writer.hasAudioTrack=YES;
+ 
     }
     return _writer;
 }
@@ -129,7 +132,7 @@ WXSmartVideoDelegate
     return _camera;
 }
 
-#pragma mark - ActionMethod
+#pragma mark - ActionMethod 前后摄像头切换
 - (void)InvertShot:(UIButton *)btn {
     btn.selected = !btn.selected;
     if (kFaceSmartVideo) {
@@ -190,7 +193,7 @@ WXSmartVideoDelegate
     
 #warning 这是一个坑
     [self.camera removeAllTargets]; // 这句很重要！！ 否则添加滤镜会闪屏
-    
+// MARK: 添加 美颜滤镜
     _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
     [self.camera addTarget:_beautifyFilter];
     [_beautifyFilter addTarget:filterView];
@@ -225,10 +228,33 @@ WXSmartVideoDelegate
 
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView captureCurrentFrame:(BOOL)capture {
     if (capture && !_savingImg) {
-        NSLog(@"拍照");
-        [self writerCurrentFrameToLibrary];
+        if (kFaceSmartVideo) {
+            [self writerCurrentFrameToLibrary];
+        }else {
+            [self smartVideoCurrentFrame];
+        }
     }
 }
+
+
+- (void)smartVideoCurrentFrame {
+    _savingImg = YES;
+    AVCaptureConnection *conntion = [self.recorder.imageDataOutput connectionWithMediaType:AVMediaTypeVideo];
+    if (!conntion) {
+        NSLog(@"拍照失败");
+        return;
+    }
+    [self.recorder.imageDataOutput captureStillImageAsynchronouslyFromConnection:conntion
+                                                      completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
+                                                          if (imageDataSampleBuffer == nil) {
+                                                              return ;
+                                                          }
+                                                          NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
+                                                          UIImage *img = [UIImage imageWithData:imageData];
+                                                        UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+                                                      }];
+}
+
 
 - (void)startRecording {
     if (kFaceSmartVideo) {
@@ -241,8 +267,8 @@ WXSmartVideoDelegate
 
 - (void)finishRecording {
     if (kFaceSmartVideo) {
-        self.camera.audioEncodingTarget = nil;
         [_beautifyFilter removeTarget:_writer];
+        self.camera.audioEncodingTarget = nil;
         [_writer finishRecording];
         [self writerVideoToLibrary];
     }else {
@@ -253,12 +279,9 @@ WXSmartVideoDelegate
 #pragma mark - Save 
 - (void)writerVideoToLibrary {
     ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-    if ([library videoAtPathIsCompatibleWithSavedPhotosAlbum:self.videoUrl])
-    {
-        [library writeVideoAtPathToSavedPhotosAlbum:self.videoUrl completionBlock:^(NSURL *assetURL, NSError *error)
-         {
+    if ([library videoAtPathIsCompatibleWithSavedPhotosAlbum:self.videoUrl]) {
+        [library writeVideoAtPathToSavedPhotosAlbum:self.videoUrl completionBlock:^(NSURL *assetURL, NSError *error) {
              dispatch_async(dispatch_get_main_queue(), ^{
-                 
                  if (error) {
                      [self showAlterViewTitle:@"失败" message:@"视频保存失败"];
                  } else {
@@ -272,7 +295,7 @@ WXSmartVideoDelegate
 - (void)writerCurrentFrameToLibrary {
     _savingImg = YES;
     [self.camera capturePhotoAsJPEGProcessedUpToFilter:_beautifyFilter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
-#warning 这是第二个坑，用这种方式保存照片到相册正常，否则会90度旋转
+#warning 这是第二个坑，用这种方式保存照片到相册正常，官方demo种的相片保存会90度旋转
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         [library writeImageDataToSavedPhotosAlbum:processedJPEG metadata:self.camera.currentCaptureMetadata completionBlock:^(NSURL *assetURL, NSError *error2) {
              UIImage *img = [UIImage imageWithData:processedJPEG];
