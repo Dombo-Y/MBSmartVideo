@@ -44,6 +44,8 @@
 		D1BAE6C11EC19F9E008D4D60 /* WXSmartVideoBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6BC1EC19F9E008D4D60 /* WXSmartVideoBottomView.m */; };
 		D1BAE6C21EC19F9E008D4D60 /* WXSmartVideoControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6BE1EC19F9E008D4D60 /* WXSmartVideoControlView.m */; };
 		D1BAE6C31EC19F9E008D4D60 /* WXSmartVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6C01EC19F9E008D4D60 /* WXSmartVideoView.m */; };
+		D1BAE6C71EC1B6FA008D4D60 /* WXVideoPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6C61EC1B6FA008D4D60 /* WXVideoPreviewViewController.m */; };
+		D1BAE6D61EC2DDC8008D4D60 /* VideoPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6D51EC2DDC8008D4D60 /* VideoPlayerView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +108,10 @@
 		D1BAE6BE1EC19F9E008D4D60 /* WXSmartVideoControlView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoControlView.m; sourceTree = "<group>"; };
 		D1BAE6BF1EC19F9E008D4D60 /* WXSmartVideoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXSmartVideoView.h; sourceTree = "<group>"; };
 		D1BAE6C01EC19F9E008D4D60 /* WXSmartVideoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXSmartVideoView.m; sourceTree = "<group>"; };
+		D1BAE6C51EC1B6FA008D4D60 /* WXVideoPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXVideoPreviewViewController.h; sourceTree = "<group>"; };
+		D1BAE6C61EC1B6FA008D4D60 /* WXVideoPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXVideoPreviewViewController.m; sourceTree = "<group>"; };
+		D1BAE6D41EC2DDC8008D4D60 /* VideoPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayerView.h; sourceTree = "<group>"; };
+		D1BAE6D51EC2DDC8008D4D60 /* VideoPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayerView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -266,6 +272,8 @@
 			children = (
 				D14265971EAE08DD00463958 /* HUBProcessView.h */,
 				D14265981EAE08DD00463958 /* HUBProcessView.m */,
+				D1BAE6D41EC2DDC8008D4D60 /* VideoPlayerView.h */,
+				D1BAE6D51EC2DDC8008D4D60 /* VideoPlayerView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -288,6 +296,8 @@
 				D1BAE6BE1EC19F9E008D4D60 /* WXSmartVideoControlView.m */,
 				D1BAE6BF1EC19F9E008D4D60 /* WXSmartVideoView.h */,
 				D1BAE6C01EC19F9E008D4D60 /* WXSmartVideoView.m */,
+				D1BAE6C51EC1B6FA008D4D60 /* WXVideoPreviewViewController.h */,
+				D1BAE6C61EC1B6FA008D4D60 /* WXVideoPreviewViewController.m */,
 			);
 			path = WXSmartVideo;
 			sourceTree = "<group>";
@@ -434,6 +444,7 @@
 				D140CF3D1E1E343800BABA31 /* MBSmartVideoRecorder.m in Sources */,
 				D140CF2F1E1E338100BABA31 /* SmartViewController.m in Sources */,
 				D14265991EAE08DD00463958 /* HUBProcessView.m in Sources */,
+				D1BAE6C71EC1B6FA008D4D60 /* WXVideoPreviewViewController.m in Sources */,
 				D1BAE6C21EC19F9E008D4D60 /* WXSmartVideoControlView.m in Sources */,
 				D1BAE6C31EC19F9E008D4D60 /* WXSmartVideoView.m in Sources */,
 				D1BAE6AC1EC153D8008D4D60 /* GPUImageBeautifyFilter.m in Sources */,
@@ -441,6 +452,7 @@
 				D140CF3F1E1E343800BABA31 /* MBSmartVideoView.m in Sources */,
 				D11261441E05344E00792264 /* AppDelegate.m in Sources */,
 				D140CF431E1E366500BABA31 /* MBActionSheetView.m in Sources */,
+				D1BAE6D61EC2DDC8008D4D60 /* VideoPlayerView.m in Sources */,
 				D140CF3C1E1E343800BABA31 /* MBSmartVideoConverter.m in Sources */,
 				D11261411E05344E00792264 /* main.m in Sources */,
 				D1BAE6C11EC19F9E008D4D60 /* WXSmartVideoBottomView.m in Sources */,

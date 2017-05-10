@@ -19,7 +19,14 @@
     if(self = [super initWithFrame:frame]){
         _progressWidth = 5;
         
+        self.layer.borderWidth = 0.5;
+        self.layer.cornerRadius = 5;
+        [self.layer setMasksToBounds:YES];
+        
         self.backgroundColor = [UIColor clearColor];
+        UIView *bgView = [[UIView alloc] initWithFrame:self.bounds];
+        bgView.backgroundColor = [UIColor whiteColor];
+        [self addSubview:bgView];
         
         _processLabel = [[UILabel alloc] initWithFrame:self.bounds];
         [self addSubview:_processLabel];

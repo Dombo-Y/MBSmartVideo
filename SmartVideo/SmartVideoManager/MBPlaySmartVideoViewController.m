@@ -60,7 +60,7 @@ MBActionSheetDelegate
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor blackColor];
     [self.view addSubview:self.videoView];
     [self.view addSubview:self.bottomView];
     [self.view addSubview:self.headerView];

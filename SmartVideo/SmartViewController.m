@@ -12,6 +12,7 @@
 #import "DownLoadManager.h"
 #import "HUBProcessView.h"
 #import "WXSmartVideoView.h"
+#import "WXVideoPreviewViewController.h"
 @interface SmartViewController ()
 
 @property (nonatomic, copy) NSString *videoUrll;
@@ -110,6 +111,7 @@
 - (IBAction)downLoad:(UIButton *)sender {
     NSString *urlString = @"https://oimk77aue.qnssl.com/urvR-zC_bYguXcSEz0qrg9brhSA=/FoA9SzbYC3vSMa3ZhTatBdpPu8WW";
     __weak typeof(self) weakSekf=self;
+    [[HUBProcessView shareHUBProcess] showHubProcess:0];
     [DownLoadManager downLoadFileWithURL:urlString
                                  process:^(CGFloat processNum) {
                                      NSLog(@"%f", processNum);

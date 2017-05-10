@@ -9,11 +9,10 @@
 #import "WXSmartVideoView.h"
 #import "WXSmartVideoBottomView.h"
 #import "MBSmartVideoRecorder.h"
-
+#import "WXVideoPreviewViewController.h"
 #import "GPUImage.h"
 #import "GPUImageSketchFilter.h"
 #import "GPUImageBeautifyFilter.h"
-
 #import <AssetsLibrary/ALAssetsLibrary.h>
 @interface WXSmartVideoView()<
 WXSmartVideoDelegate
@@ -35,6 +34,8 @@ WXSmartVideoDelegate
 @property (nonatomic, strong) NSURL *videoUrl;
 
 @property (nonatomic, assign) BOOL savingImg;
+
+@property (nonatomic, strong) WXVideoPreviewViewController *vc;
 @end
 
 
@@ -132,6 +133,13 @@ WXSmartVideoDelegate
     return _camera;
 }
 
+- (WXVideoPreviewViewController *)vc {
+    if (!_vc) {
+        _vc = [[WXVideoPreviewViewController alloc] init];
+    }
+    return _vc;
+}
+
 #pragma mark - ActionMethod 前后摄像头切换
 - (void)InvertShot:(UIButton *)btn {
     btn.selected = !btn.selected;
@@ -160,7 +168,8 @@ WXSmartVideoDelegate
 //                 {
 //                     weakSelf.finishedRecordBlock(info);
 //                 }
-                 [weakSelf removeSelf];
+//                 [weakSelf removeSelf];
+                 [weakSelf previewSandboxVideo:[info objectForKey:@"videoURL"]];
              }
                  break;
              case RecorderFinishedReasonCancle:
@@ -244,6 +253,7 @@ WXSmartVideoDelegate
         NSLog(@"拍照失败");
         return;
     }
+    __weak id weakSelf = self;
     [self.recorder.imageDataOutput captureStillImageAsynchronouslyFromConnection:conntion
                                                       completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
                                                           if (imageDataSampleBuffer == nil) {
@@ -251,7 +261,7 @@ WXSmartVideoDelegate
                                                           }
                                                           NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
                                                           UIImage *img = [UIImage imageWithData:imageData];
-                                                        UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+                                                          [weakSelf saveImageWriteToPhotosAlbum:img];
                                                       }];
 }
 
@@ -261,7 +271,7 @@ WXSmartVideoDelegate
         self.camera.audioEncodingTarget = _writer;
         [_writer startRecording];
     }else {
-        
+        [self.recorder startCapture];
     }
 }
 
@@ -272,7 +282,7 @@ WXSmartVideoDelegate
         [_writer finishRecording];
         [self writerVideoToLibrary];
     }else {
-        
+        [self.recorder stopCapture];
     }
 }
 
@@ -294,16 +304,21 @@ WXSmartVideoDelegate
 
 - (void)writerCurrentFrameToLibrary {
     _savingImg = YES;
+    __weak id weakSelf = self;
     [self.camera capturePhotoAsJPEGProcessedUpToFilter:_beautifyFilter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
 #warning 这是第二个坑，用这种方式保存照片到相册正常，官方demo种的相片保存会90度旋转
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         [library writeImageDataToSavedPhotosAlbum:processedJPEG metadata:self.camera.currentCaptureMetadata completionBlock:^(NSURL *assetURL, NSError *error2) {
              UIImage *img = [UIImage imageWithData:processedJPEG];
-             if (img) {
-                 UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-             }
+            [weakSelf saveImageWriteToPhotosAlbum:img];
          }];
     }];
+}
+
+- (void)saveImageWriteToPhotosAlbum:(UIImage *)img {
+    if (img) {
+        UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    }
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
@@ -322,4 +337,10 @@ WXSmartVideoDelegate
     [alert show];
 }
 
+
+- (void)previewSandboxVideo:(NSString *)sanboxURL {
+    NSLog(@"%@", sanboxURL);
+    self.vc.url = sanboxURL;
+    [self addSubview:self.vc.view];
+}
 @end

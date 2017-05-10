@@ -31,6 +31,7 @@ typedef void (^FinishRecordingBlock)(NSDictionary *info, RecorderFinishedReason 
 //=== 参数设置
 @property (nonatomic, assign) CGSize cropSize;//!< 视频捕捉画面宽高
 @property (nonatomic, assign) NSTimeInterval maxDuration;//视频最长时间
+
 //=== Results
 @property (nonatomic, assign) NSTimeInterval duration; //!< 视频持续时间
 @property (nonatomic, strong) NSURL *recordURL;//!< 本地视频地址
