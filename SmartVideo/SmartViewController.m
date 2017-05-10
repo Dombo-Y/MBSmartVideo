@@ -92,6 +92,10 @@
     if (![self isSimulator]) {
         NSLog(@"小视频全屏录制");
         WXSmartVideoView *wxsmartView = [[WXSmartVideoView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+//        wxsmartView.finishedRecordBlock = ^(NSDictionary *dic) {
+//            NSLog(@"录制完成 %@", [dic objectForKey:@"videoURL"]);
+//            self.videoUrll = [[dic objectForKey:@"videoURL"] description];
+//        };
         [self.navigationController.view addSubview:wxsmartView];
     }else {
         NSLog(@"模拟器不支持小视频录制");
@@ -105,6 +109,11 @@
         MBPlaySmartVideoViewController *playVC =[[MBPlaySmartVideoViewController alloc] init];
         playVC.videoUrlString = self.videoUrll;
         [self.navigationController pushViewController:playVC animated:YES];
+        
+        NSLog(@"videoUrll == %@", self.videoUrll);
+//        WXVideoPreviewViewController *vc = [[WXVideoPreviewViewController alloc] init];
+//        vc.url = self.videoUrll;
+//        [self.navigationController pushViewController:vc animated:YES];
     }
 }
 

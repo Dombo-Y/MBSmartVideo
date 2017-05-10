@@ -10,4 +10,6 @@
 
 @interface WXSmartVideoView : UIView
 
+
+@property (nonatomic, copy) void (^finishedRecordBlock)(NSDictionary *dic);
 @end

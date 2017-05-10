@@ -12,10 +12,6 @@
 VideoPlayerViewDelegate
 >
 
-@property (nonatomic, strong) AVPlayer *player;
-@property (nonatomic, strong) AVPlayerLayer *playerLayer;
-@property (nonatomic, strong) AVPlayerItem *item;
-
 @property (nonatomic, strong) VideoPlayerView *playerView;
 @end
 
@@ -33,48 +29,37 @@ VideoPlayerViewDelegate
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor brownColor];
     
-    self.playerView = [[VideoPlayerView alloc] initWithFrame:CGRectMake(0, 50, self.view.width, self.view.height - 50) videoUrl:self.url];
+    UIImageView *imgView = [[UIImageView alloc] initWithImage:[self getVideoPreViewImage]];
+    [self.view addSubview:imgView];
+    imgView.frame = self.view.bounds;
+    
+    
+    self.playerView = [[VideoPlayerView alloc] initWithFrame:self.view.bounds videoUrl:self.url];
     self.playerView.delegate = self;
     [self.view addSubview:self.playerView];
-//    NSURL *url;
-//    if ([self.url hasPrefix:@"http"]) {
-//        // 网络播放
-//        url = [NSURL URLWithString:self.url];
-//    }else {
-//        // 本地播放
-//        url = [NSURL fileURLWithPath:self.url];
-//    }
-//    self.item = [AVPlayerItem playerItemWithURL:url]; //#
-//    self.player = [[AVPlayer alloc] initWithPlayerItem:self.item];
-//    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer: self.player];
-//    self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-//    self.playerLayer.frame = CGRectMake(0, 50, self.view.width, self.view.height - 50); //#
-//    self.playerLayer.backgroundColor = [UIColor purpleColor].CGColor;
-//    [self.view.layer addSublayer:self.playerLayer];
-//    [self.playerLayer setNeedsDisplay];
-//    
-//    [self.item addObserver:self
-//                forKeyPath:@"status"
-//                   options:NSKeyValueObservingOptionNew
-//                   context:nil];
-//    
-//    [self.item addObserver:self
-//                forKeyPath:@"loadedTimeRanges"
-//                   options:NSKeyValueObservingOptionNew
-//                   context:nil];
-//    
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(playerDidFinished:)
-//                                                 name:AVPlayerItemDidPlayToEndTimeNotification
-//                                               object:nil];
     
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.frame = CGRectMake(0, 0, 50, 50);
-    btn.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:btn];
-    [btn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *confirmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [confirmBtn setImage:[UIImage imageNamed:@"video_right"] forState:UIControlStateNormal];
+    confirmBtn.frame = CGRectMake(0, 0, 80, 80);
+    confirmBtn.center = CGPointMake(SCREEN_WIDTH/2, SCREEN_HEIGHT - 80);
+    confirmBtn.layer.cornerRadius = confirmBtn.width / 2;
+    [confirmBtn addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
+    confirmBtn.tag = 2;
+    [self.view addSubview:confirmBtn];
+    
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"video_back"] forState:UIControlStateNormal];
+    backBtn.frame = confirmBtn.frame;
+    backBtn.layer.cornerRadius = backBtn.width / 2;
+    backBtn.tag = 1;
+    [backBtn addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backBtn];
+    
+    [UIView animateWithDuration:0.1 animations:^{
+        backBtn.left = SCREEN_WIDTH *0.093;
+        confirmBtn.right = SCREEN_WIDTH - SCREEN_WIDTH *0.093;
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -82,10 +67,38 @@ VideoPlayerViewDelegate
     // Dispose of any resources that can be recreated.
 }
 
-- (void)back {
-    [self.navigationController popViewControllerAnimated:YES];
+- (UIImage*) getVideoPreViewImage {
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:[NSURL URLWithString:self.url] options:nil];
+    AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    
+    gen.appliesPreferredTrackTransform = YES;
+    CMTime time = CMTimeMakeWithSeconds(0.0, 600);
+    NSError *error = nil;
+    CMTime actualTime;
+    CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
+    UIImage *img = [[UIImage alloc] initWithCGImage:image];
+    CGImageRelease(image);
+    return img;
 }
 
+#pragma mark - ActionMethod
+- (void)clickAction:(UIButton *)btn {
+    [self.view removeFromSuperview];
+    [self.playerView pause];
+    [self.playerView removeFromSuperview];
+    self.playerView = nil;
+    if (btn.tag == 1) {
+        NSLog(@"后退");
+    }
+    else if (btn.tag == 2){
+        NSLog(@"提交");
+        if (self.operateBlock) {
+            self.operateBlock();
+        }
+    }
+}
+
+#pragma mark - VideoPlayerViewDelegate
 - (void)videoPlayerView:(VideoPlayerView *)playerView playerStatus:(VideoPlayerStatusEnum)status {
     switch (status) {
         case VideoPlayerStatusReadyToPlay:{
@@ -116,6 +129,7 @@ VideoPlayerViewDelegate
     NSLog(@"currentSecond == %f", second);
 }
 
+#pragma mark - dealloc
 - (void)dealloc {
     NSLog(@"销毁");
 }

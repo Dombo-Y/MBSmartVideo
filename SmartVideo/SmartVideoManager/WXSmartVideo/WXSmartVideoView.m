@@ -39,7 +39,7 @@ WXSmartVideoDelegate
 @end
 
 
-#define kMAXDURATION 6
+#define kMAXDURATION 10
 #define kFaceSmartVideo 0
 @implementation WXSmartVideoView
 
@@ -85,6 +85,7 @@ WXSmartVideoDelegate
         _bottomView = [[WXSmartVideoBottomView alloc] initWithFrame:CGRectMake(0,SCREEN_HEIGHT - 180, SCREEN_WIDTH, 300)];
         _bottomView.backgroundColor = [UIColor clearColor];
         _bottomView.delegate = self;
+        _bottomView.duration = kMAXDURATION;
         __weak id weakSelf = self;
         [_bottomView setBackBlock:^{
             [weakSelf removeFromSuperview];
@@ -155,7 +156,7 @@ WXSmartVideoDelegate
     self.recorder = [MBSmartVideoRecorder sharedRecorder];
     self.recorder.maxDuration = kMAXDURATION;
     self.recorder.cropSize = self.preview.frame.size;
-    
+
     __weak __typeof(&*self)weakSelf = self;
     [self.recorder setFinishBlock:^(NSDictionary *info, RecorderFinishedReason reason) {
          switch (reason)
@@ -164,12 +165,7 @@ WXSmartVideoDelegate
              case RecorderFinishedReasonBeyondMaxDuration:
              {
                  NSLog(@"%@", info);
-//                 if (weakSelf.finishedRecordBlock)
-//                 {
-//                     weakSelf.finishedRecordBlock(info);
-//                 }
-//                 [weakSelf removeSelf];
-                 [weakSelf previewSandboxVideo:[info objectForKey:@"videoURL"]];
+                 [weakSelf previewSandboxVideo:[info objectForKey:@"videoURL"] videoInfo:info];
              }
                  break;
              case RecorderFinishedReasonCancle:
@@ -221,7 +217,7 @@ WXSmartVideoDelegate
 #pragma  mark - WXSmartVideoDelegate
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView zoomLens:(CGFloat)scaleNum {
 //    [self.recorder setScaleFactor:scaleNum];
-    NSLog(@"scaleNum == %f" , scaleNum);
+//    NSLog(@"scaleNum == %f" , scaleNum);
 }
 
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView isRecording:(BOOL)recording {
@@ -338,9 +334,17 @@ WXSmartVideoDelegate
 }
 
 
-- (void)previewSandboxVideo:(NSString *)sanboxURL {
+- (void)previewSandboxVideo:(NSString *)sanboxURL videoInfo:(NSDictionary *)info{
     NSLog(@"%@", sanboxURL);
+    __weak __typeof(&*self)weakSelf = self;
     self.vc.url = sanboxURL;
+    [_vc setOperateBlock:^{
+         if (weakSelf.finishedRecordBlock)
+         {
+             weakSelf.finishedRecordBlock(info);
+         }
+         [weakSelf removeSelf];
+    }];
     [self addSubview:self.vc.view];
 }
 @end

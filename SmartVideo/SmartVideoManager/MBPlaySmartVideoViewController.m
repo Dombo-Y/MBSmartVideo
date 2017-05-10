@@ -72,15 +72,7 @@ MBActionSheetDelegate
     
     CGFloat height = SCREEN_WIDTH * 0.747;
 
-    NSURL *url;
-    if ([self.videoUrlString hasPrefix:@"http"]) {
-        // 网络播放
-        url = [NSURL URLWithString:self.videoUrlString];
-    }else {
-        // 本地播放
-        url = [NSURL fileURLWithPath:self.videoUrlString];
-    }
-    self.item = [AVPlayerItem playerItemWithURL:url];
+    self.item = [AVPlayerItem playerItemWithURL:[self urlValidation:self.videoUrlString]];
     self.player = [[AVPlayer alloc] initWithPlayerItem:self.item];
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer: self.player];
     self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
@@ -324,6 +316,23 @@ MBActionSheetDelegate
         double currentValue = CMTimeGetSeconds(weakSelf.player.currentTime);
         weakSelf.slider.value = currentValue;
     }];
+}
+
+- (NSURL *)urlValidation:(NSString *)URLString {
+    NSURL *url;
+    if ([URLString hasPrefix:@"http"]) {
+        // 网络播放
+        url = [NSURL URLWithString:URLString];
+    }else {
+        // 本地播放
+        if ([URLString hasPrefix:@"file://"]) {
+            NSMutableString *mutableString = [URLString mutableCopy];
+            [mutableString replaceCharactersInRange:NSMakeRange(0, 7) withString:@""];
+            URLString = [mutableString copy];
+        }
+        url = [NSURL fileURLWithPath:URLString];
+    }
+    return url;
 }
 
 #pragma mark - Action

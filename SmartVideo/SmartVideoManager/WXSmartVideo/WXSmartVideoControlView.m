@@ -125,22 +125,25 @@
                                                               endAngle:(M_PI*2) *_progress +(-M_PI_2)
                                                              clockwise:YES];
     _progressLayer.path = progressPath.CGPath;
-//    NSLog(@"_progress == %f", _progress);
+    NSLog(@"_progress == %f", _progress);
 }
 
 #pragma mark - action
 - (void)start {
     // _duration =10 时，为，0.01秒一刷新
     // 每次增加的增量为 0.001
+    NSLog(@"_animationTime == %f", _animationTime);
     _timer = [NSTimer scheduledTimerWithTimeInterval:_animationTime target:self selector:@selector(addprogress) userInfo:nil repeats:YES];
 }
 
 - (void)addprogress {
-    _progress += _animationIncr;
-    [self updataProgress];
-    if (_progress >1) {
-        [self stop];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _progress += _animationIncr;
+        [self updataProgress];
+        if (_progress >1) {
+            [self stop];
+        } 
+    });
 }
 
 - (void)stop {

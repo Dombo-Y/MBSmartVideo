@@ -107,4 +107,9 @@ SmartVideoControlDelegate
             break;
     }
 }
+
+- (void)setDuration:(NSInteger)duration {
+    _duration = duration;
+    _controlView.duration = duration;
+}
 @end

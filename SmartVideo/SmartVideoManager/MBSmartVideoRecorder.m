@@ -313,7 +313,6 @@ MBSmartVideoWriterDelegate
 
 
 - (void)swapFrontAndBackCameras {
-    // Assume the session is already running
     NSArray *inputs =self.session.inputs;
     for (AVCaptureDeviceInput *input in inputs ) {
         AVCaptureDevice *device = input.device;
@@ -325,8 +324,8 @@ MBSmartVideoWriterDelegate
                 newCamera = [self cameraWithPosition:AVCaptureDevicePositionBack];
             else
                 newCamera = [self cameraWithPosition:AVCaptureDevicePositionFront];
-            newInput = [AVCaptureDeviceInput deviceInputWithDevice:newCamera error:nil];
             
+            newInput = [AVCaptureDeviceInput deviceInputWithDevice:newCamera error:nil];
             // beginConfiguration ensures that pending changes are not applied immediately
             [self.session beginConfiguration];
             
@@ -366,11 +365,14 @@ MBSmartVideoWriterDelegate
         
         if ((_writer == nil) && !bVideo)
         {
-            NSString *name = [NSString stringWithFormat:@"%@.mp4",[self getVideoSaveFilePathString]];
-            _smartVideoPath = [NSTemporaryDirectory() stringByAppendingPathComponent:name];
+            NSString *name = [NSString stringWithFormat:@"/%@.mov",[self getVideoSaveFilePathString]];
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES);
+            _smartVideoPath = [paths objectAtIndex:0];
+            _smartVideoPath = [_smartVideoPath stringByAppendingString:name];
             _recordURL = [NSURL fileURLWithPath:_smartVideoPath];
             _writer  = [[MBSmartVideoWriter alloc] initWithURL:_recordURL cropSize:_cropSize];
             _writer.delegate = self;
+            NSLog(@"_smartVideoPath == %@",_smartVideoPath);
         }
         
          CFRetain(sampleBuffer);
@@ -407,21 +409,20 @@ MBSmartVideoWriterDelegate
         [library writeVideoAtPathToSavedPhotosAlbum:recorder.recordingURL completionBlock:^(NSURL *assetURL, NSError *error)
          {
              NSLog(@"save completed");
+             if (self.finishBlock)
+             {
+                 long long size = [self getCacheFileSize:_smartVideoPath];
+                 long long videoSize = size / 1024;
+                 NSLog(@"_smartVideoPath == %@",_smartVideoPath);
+                 NSDictionary *info = @{@"videoURL":[_recordURL description],
+                                        @"videoDuration":[NSString stringWithFormat:@"%.0f",_duration],
+                                        @"videoSize":[NSString stringWithFormat:@"%lldkb",videoSize],
+                                        @"videoFirstFrame":[self.frames firstObject]
+                                        };
+                 self.finishBlock(info,self.finishReason);
+             }
          }];
-        
-        
-        if (self.finishBlock)
-        {
-            long long size = [self getCacheFileSize:_smartVideoPath];
-            long long videoSize = size / 1024;
-            
-            NSDictionary *info = @{@"videoURL":[_recordURL description],
-                                   @"videoDuration":[NSString stringWithFormat:@"%.0f",_duration],
-                                   @"videoSize":[NSString stringWithFormat:@"%lldkb",videoSize],
-                                   @"videoFirstFrame":[self.frames firstObject]
-                                   };
-            self.finishBlock(info,self.finishReason);
-        }
+    
     }
     else
     {

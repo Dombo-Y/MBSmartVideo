@@ -11,4 +11,6 @@
 @interface WXVideoPreviewViewController : UIViewController
 
 @property (nonatomic, copy) NSString *url;
+
+@property (nonatomic, copy) void (^operateBlock)();
 @end

@@ -23,7 +23,7 @@
         _playItem = [AVPlayerItem playerItemWithURL:[self urlValidation:url]];
         _player = [[AVPlayer alloc] initWithPlayerItem:_playItem];
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-        _playerLayer.frame = self.bounds;
+        _playerLayer.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
         [self.layer addSublayer:_playerLayer];
         [self noticeAndKVO];
     }
@@ -34,10 +34,13 @@
 - (NSURL *)urlValidation:(NSString *)URLString {
     NSURL *url;
     if ([URLString hasPrefix:@"http"]) {
-        // 网络播放
-        url = [NSURL URLWithString:URLString];
+        url = [NSURL URLWithString:URLString]; // 网络播放
     }else {
-        // 本地播放
+        if ([URLString hasPrefix:@"file://"]) {     // 本地播放
+            NSMutableString *mutableString = [URLString mutableCopy];
+            [mutableString replaceCharactersInRange:NSMakeRange(0, 7) withString:@""];
+            URLString = [mutableString copy];
+        }
         url = [NSURL fileURLWithPath:URLString];
     }
     return url;

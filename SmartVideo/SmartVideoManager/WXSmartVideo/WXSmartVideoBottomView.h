@@ -24,5 +24,7 @@
 @property (nonatomic, copy)void (^backBlock)();
 
 @property (nonatomic, weak)id <WXSmartVideoDelegate>delegate;
+
+@property (nonatomic, assign)NSInteger duration;
 @end
 
