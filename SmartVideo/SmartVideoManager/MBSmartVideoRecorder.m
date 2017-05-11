@@ -246,10 +246,10 @@ MBSmartVideoWriterDelegate
             if ([self.session canAddOutput:self.videoDataOutput])
             {
                 [self.session addOutput:self.videoDataOutput];
-//                [self.captureDevice addObserver:self
-//                                     forKeyPath:@"adjustingFocus"
-//                                        options:NSKeyValueObservingOptionNew
-//                                        context:FocusAreaChangedContext];
+                [self.captureDevice addObserver:self
+                                     forKeyPath:@"adjustingFocus"
+                                        options:NSKeyValueObservingOptionNew
+                                        context:nil];
                
                 self.videoConnection = [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
                 if (self.videoConnection.isVideoStabilizationSupported)
@@ -441,8 +441,13 @@ MBSmartVideoWriterDelegate
     if([keyPath isEqualToString:@"adjustingFocus"])
     {
         BOOL adjustingFocus =[[change objectForKey:NSKeyValueChangeNewKey] isEqualToNumber:[NSNumber numberWithInt:1]];
-        NSLog(@"Is adjusting focus? %@", adjustingFocus ?@"YES":@"NO");
-        NSLog(@"Change dictionary: %@", change);
+//        NSLog(@"Is adjusting focus? %@", adjustingFocus ?@"YES":@"NO");
+//        NSLog(@"Change dictionary: %@", change);
+        if (adjustingFocus) {
+            NSLog(@"对焦成功");
+        }else {
+            NSLog(@"对焦失败");
+        }
     }
     else
     {
@@ -570,6 +575,38 @@ MBSmartVideoWriterDelegate
     return 0;
 }
 
+// MARK: 焦距改变
+- (void)setFocusPoint:(CGPoint)point {
+    if (self.captureDevice.isFocusPointOfInterestSupported) {
+        NSError *error = nil;
+        [self.captureDevice lockForConfiguration:&error];
+        /*****必须先设定聚焦位置，在设定聚焦方式******/
+        //聚焦点的位置
+        if ([self.captureDevice isFocusPointOfInterestSupported]) {
+            [self.captureDevice setFocusPointOfInterest:point];
+        }
+        
+        // 聚焦模式
+        if ([self.captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+            [self.captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
+        }else{
+            NSLog(@"聚焦模式修改失败");
+        }
+        
+        //曝光点的位置
+        if ([self.captureDevice isExposurePointOfInterestSupported]) {
+            [self.captureDevice setExposurePointOfInterest:point];
+        }
+        
+        //曝光模式
+        if ([self.captureDevice isExposureModeSupported:AVCaptureExposureModeAutoExpose]) {
+            [self.captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
+        }else{
+            NSLog(@"曝光模式修改失败");
+        }
+        [self.captureDevice unlockForConfiguration];
+    }
+}
 #pragma mark -
 - (void)dealloc {
     

@@ -13,4 +13,6 @@
 @property (nonatomic, copy) NSString *url;
 
 @property (nonatomic, copy) void (^operateBlock)();
+
+@property (nonatomic, strong) UIImage *img;
 @end

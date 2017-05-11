@@ -25,19 +25,30 @@ VideoPlayerViewDelegate
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
+  
+    [self removeAllSubView];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIImageView *imgView = [[UIImageView alloc] initWithImage:[self getVideoPreViewImage]];
-    [self.view addSubview:imgView];
-    imgView.frame = self.view.bounds;
+    UIImageView *imgView ;
+    if (self.url.length >0) {
+        imgView = [[UIImageView alloc] initWithImage:[self getVideoPreViewImage]];
+        [self.view addSubview:imgView];
+        imgView.frame = self.view.bounds;
+        
+        self.playerView = [[VideoPlayerView alloc] initWithFrame:self.view.bounds videoUrl:self.url];
+        self.playerView.delegate = self;
+        [self.view addSubview:self.playerView];
+    }else {
+        imgView = [[UIImageView alloc] initWithImage:self.img];
+        [self.view addSubview:imgView];
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.frame = self.view.bounds;
+    }
     
-    
-    self.playerView = [[VideoPlayerView alloc] initWithFrame:self.view.bounds videoUrl:self.url];
-    self.playerView.delegate = self;
-    [self.view addSubview:self.playerView];
+
     
     UIButton *confirmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [confirmBtn setImage:[UIImage imageNamed:@"video_right"] forState:UIControlStateNormal];
@@ -60,6 +71,12 @@ VideoPlayerViewDelegate
         backBtn.left = SCREEN_WIDTH *0.093;
         confirmBtn.right = SCREEN_WIDTH - SCREEN_WIDTH *0.093;
     }];
+
+}
+- (void)removeAllSubView {
+    while (self.view.subviews.count) {
+        [self.view.subviews.lastObject removeFromSuperview];
+    }
 }
 
 - (void)didReceiveMemoryWarning {

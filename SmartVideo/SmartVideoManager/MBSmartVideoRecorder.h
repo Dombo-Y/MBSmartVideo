@@ -50,4 +50,5 @@ typedef void (^FinishRecordingBlock)(NSDictionary *info, RecorderFinishedReason 
 - (void)swapFrontAndBackCameras; /*摄像头翻转**/
 
 - (BOOL)setScaleFactor:(CGFloat)factor;/***/// 设置缩放比例
+- (void)setFocusPoint:(CGPoint)point; /*焦距改变**/ 
 @end

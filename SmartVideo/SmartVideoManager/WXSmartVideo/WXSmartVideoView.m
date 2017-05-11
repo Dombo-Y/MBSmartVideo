@@ -36,11 +36,14 @@ WXSmartVideoDelegate
 @property (nonatomic, assign) BOOL savingImg;
 
 @property (nonatomic, strong) WXVideoPreviewViewController *vc;
+
+@property (nonatomic, strong) UIView *focusView;
 @end
 
 
 #define kMAXDURATION 10
 #define kFaceSmartVideo 0
+//#define kWeakSelf
 @implementation WXSmartVideoView
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -98,6 +101,9 @@ WXSmartVideoDelegate
     if (!_preview) {
         _preview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
         _preview.backgroundColor = [UIColor purpleColor];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapPreview:)];
+        [_preview addGestureRecognizer:tap];
     }
     return _preview;
 }
@@ -134,13 +140,17 @@ WXSmartVideoDelegate
     return _camera;
 }
 
-- (WXVideoPreviewViewController *)vc {
-    if (!_vc) {
-        _vc = [[WXVideoPreviewViewController alloc] init];
+- (UIView *)focusView {
+    if (!_focusView) {
+        _focusView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
+        _focusView.backgroundColor = [UIColor clearColor];
+        _focusView.layer.borderWidth = 1;
+        _focusView.layer.borderColor = [UIColor greenColor].CGColor;
+        _focusView.hidden = YES;
+        [self addSubview:_focusView];
     }
-    return _vc;
+    return _focusView;
 }
-
 #pragma mark - ActionMethod 前后摄像头切换
 - (void)InvertShot:(UIButton *)btn {
     btn.selected = !btn.selected;
@@ -196,8 +206,9 @@ WXSmartVideoDelegate
     [self.camera startCameraCapture];
     filterView.fillMode = 2;
     
-#warning 这是一个坑
+#warning 这是一个坑, 不加这个眼能闪瞎
     [self.camera removeAllTargets]; // 这句很重要！！ 否则添加滤镜会闪屏
+    
 // MARK: 添加 美颜滤镜
     _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
     [self.camera addTarget:_beautifyFilter];
@@ -216,8 +227,7 @@ WXSmartVideoDelegate
 
 #pragma  mark - WXSmartVideoDelegate
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView zoomLens:(CGFloat)scaleNum {
-//    [self.recorder setScaleFactor:scaleNum];
-//    NSLog(@"scaleNum == %f" , scaleNum);
+    [self.recorder setScaleFactor:scaleNum];
 }
 
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView isRecording:(BOOL)recording {
@@ -245,11 +255,15 @@ WXSmartVideoDelegate
 - (void)smartVideoCurrentFrame {
     _savingImg = YES;
     AVCaptureConnection *conntion = [self.recorder.imageDataOutput connectionWithMediaType:AVMediaTypeVideo];
+    UIDeviceOrientation curDeviceOrientation = [[UIDevice currentDevice] orientation];
+    AVCaptureVideoOrientation avcaptureOrientation = [self avOrientationForDeviceOrientation:curDeviceOrientation];
+    [conntion setVideoOrientation:avcaptureOrientation];
+    [conntion setVideoScaleAndCropFactor:1];
     if (!conntion) {
         NSLog(@"拍照失败");
         return;
     }
-    __weak id weakSelf = self;
+    kWeakSelf(self)
     [self.recorder.imageDataOutput captureStillImageAsynchronouslyFromConnection:conntion
                                                       completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error) {
                                                           if (imageDataSampleBuffer == nil) {
@@ -257,7 +271,7 @@ WXSmartVideoDelegate
                                                           }
                                                           NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
                                                           UIImage *img = [UIImage imageWithData:imageData];
-                                                          [weakSelf saveImageWriteToPhotosAlbum:img];
+                                                          [weakSelf previewPhoto:img];
                                                       }];
 }
 
@@ -300,7 +314,7 @@ WXSmartVideoDelegate
 
 - (void)writerCurrentFrameToLibrary {
     _savingImg = YES;
-    __weak id weakSelf = self;
+    kWeakSelf(self)
     [self.camera capturePhotoAsJPEGProcessedUpToFilter:_beautifyFilter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
 #warning 这是第二个坑，用这种方式保存照片到相册正常，官方demo种的相片保存会90度旋转
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
@@ -312,6 +326,11 @@ WXSmartVideoDelegate
 }
 
 - (void)saveImageWriteToPhotosAlbum:(UIImage *)img {
+    ALAuthorizationStatus author = [ALAssetsLibrary authorizationStatus];
+    if (author == ALAuthorizationStatusRestricted || author == ALAuthorizationStatusDenied){
+        //无权限
+        return ;
+    }
     if (img) {
         UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
@@ -336,9 +355,10 @@ WXSmartVideoDelegate
 
 - (void)previewSandboxVideo:(NSString *)sanboxURL videoInfo:(NSDictionary *)info{
     NSLog(@"%@", sanboxURL);
-    __weak __typeof(&*self)weakSelf = self;
+    kWeakSelf(self);
+    self.vc = [WXVideoPreviewViewController new];
     self.vc.url = sanboxURL;
-    [_vc setOperateBlock:^{
+    [self.vc setOperateBlock:^{
          if (weakSelf.finishedRecordBlock)
          {
              weakSelf.finishedRecordBlock(info);
@@ -346,5 +366,52 @@ WXSmartVideoDelegate
          [weakSelf removeSelf];
     }];
     [self addSubview:self.vc.view];
+}
+
+- (void)previewPhoto:(UIImage *)img {
+    kWeakSelf(self);
+    _savingImg = NO;
+    self.vc = [WXVideoPreviewViewController new];
+    self.vc.img = img;
+    [self.vc setOperateBlock:^{
+        [weakSelf saveImageWriteToPhotosAlbum:img];
+        [weakSelf finishedCapture:img];
+    }];
+    [self addSubview:self.vc.view];
+}
+
+- (void)finishedCapture:(UIImage *)img {
+    if (self.finishedCaptureBlock) {
+        self.finishedCaptureBlock(img);
+    };
+}
+
+-(AVCaptureVideoOrientation)avOrientationForDeviceOrientation:(UIDeviceOrientation)deviceOrientation {
+    AVCaptureVideoOrientation result = (AVCaptureVideoOrientation)deviceOrientation;
+    if ( deviceOrientation == UIDeviceOrientationLandscapeLeft )
+        result = AVCaptureVideoOrientationLandscapeRight;
+    else if ( deviceOrientation == UIDeviceOrientationLandscapeRight )
+        result = AVCaptureVideoOrientationLandscapeLeft;
+    return result;
+}
+
+- (void)tapPreview:(UITapGestureRecognizer *)tap {
+    NSLog(@"%@", NSStringFromCGPoint([tap locationInView:self]));
+    CGPoint point = [tap locationInView:self];
+    [self showFouceView:point];
+    CGPoint focusPoint = CGPointMake(point.x/self.width, point.y/self.height);
+    [self.recorder setFocusPoint:focusPoint];
+ }
+
+- (void)showFouceView:(CGPoint)point {
+    self.focusView.hidden = NO;
+    self.focusView.center = point;
+    [self hiddenFouceView];
+}
+
+- (void)hiddenFouceView {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.focusView.hidden = YES;
+    });
 }
 @end

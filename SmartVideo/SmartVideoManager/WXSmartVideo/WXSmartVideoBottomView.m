@@ -77,19 +77,17 @@ SmartVideoControlDelegate
             break;
         case UIGestureRecognizerStateChanged:{
             CGPoint point = [gest locationInView:self];
-//            NSLog(@"point == %@", NSStringFromCGPoint(point));
             
-#warning 焦距伸缩有问题
             if (point.y <0)
-            { //  NSLog(@"伸缩");
+            {
                 if (_tempY - point.y> 0)
                 {
                     if (_scaleNum <3)  _scaleNum += 0.05;
                 }else {
                     if (_scaleNum >1)   _scaleNum -= 0.05;
                 }
+                  _tempY = point.y;
             }
-            else // NSLog(@"不伸缩");
             if (self.delegate && [self.delegate respondsToSelector:@selector(wxSmartVideo:zoomLens:)]) {
                 [self.delegate wxSmartVideo:self zoomLens:_scaleNum];
             }
@@ -101,6 +99,9 @@ SmartVideoControlDelegate
             if (self.delegate && [self.delegate respondsToSelector:@selector(wxSmartVideo:isRecording:)]) {
                 [self.delegate wxSmartVideo:self isRecording:NO];
             }
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self removeScaleTemp];
+            });
         }
             break;
         default:
@@ -111,5 +112,13 @@ SmartVideoControlDelegate
 - (void)setDuration:(NSInteger)duration {
     _duration = duration;
     _controlView.duration = duration;
+}
+
+- (void)removeScaleTemp {
+    _tempY = 0;
+    _scaleNum = 1;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(wxSmartVideo:zoomLens:)]) {
+        [self.delegate wxSmartVideo:self zoomLens:_scaleNum];
+    }
 }
 @end

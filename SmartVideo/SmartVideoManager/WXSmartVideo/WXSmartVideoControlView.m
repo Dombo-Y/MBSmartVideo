@@ -49,8 +49,7 @@
         [_centerView addGestureRecognizer:tap];
         
         _width = 5;
-        _progress = 0.0f;
-        
+    
         _progressLayer = [CAShapeLayer new];
         [_outerView.layer addSublayer:_progressLayer];
         _progressLayer.fillColor = nil;
@@ -109,6 +108,7 @@
 
 #pragma mark - Progress
 -(void)setProgress{
+    _progress = 0;
     UIBezierPath *progressPath = [UIBezierPath bezierPathWithArcCenter:_centerView.center
                                                                 radius:(_outerView.width - (1.5*_width))/3
                                                             startAngle:(M_PI_2 *3)
@@ -125,7 +125,7 @@
                                                               endAngle:(M_PI*2) *_progress +(-M_PI_2)
                                                              clockwise:YES];
     _progressLayer.path = progressPath.CGPath;
-    NSLog(@"_progress == %f", _progress);
+//    NSLog(@"_progress == %f", _progress);
 }
 
 #pragma mark - action
@@ -149,7 +149,6 @@
 - (void)stop {
     [_timer invalidate];
     _timer = nil;
-    _progress = 0;
     [self setProgress];
 }
 @end

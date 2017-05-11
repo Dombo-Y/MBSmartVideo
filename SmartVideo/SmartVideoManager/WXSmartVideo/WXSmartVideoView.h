@@ -12,4 +12,6 @@
 
 
 @property (nonatomic, copy) void (^finishedRecordBlock)(NSDictionary *dic);
+
+@property (nonatomic, copy) void (^finishedCaptureBlock)(UIImage *img);
 @end

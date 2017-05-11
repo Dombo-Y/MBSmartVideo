@@ -23,8 +23,11 @@
         _playItem = [AVPlayerItem playerItemWithURL:[self urlValidation:url]];
         _player = [[AVPlayer alloc] initWithPlayerItem:_playItem];
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-        _playerLayer.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+        _playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill; // 不写这句是不会全屏的！
+        _playerLayer.frame = self.bounds;
         [self.layer addSublayer:_playerLayer];
+        
+        if (kSYSTEM_VERSION_iOS10Later) _player.automaticallyWaitsToMinimizeStalling = NO;
         [self noticeAndKVO];
     }
     return self;
