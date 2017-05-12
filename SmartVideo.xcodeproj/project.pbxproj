@@ -47,6 +47,7 @@
 		D1BAE6C71EC1B6FA008D4D60 /* WXVideoPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6C61EC1B6FA008D4D60 /* WXVideoPreviewViewController.m */; };
 		D1BAE6D61EC2DDC8008D4D60 /* VideoPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6D51EC2DDC8008D4D60 /* VideoPlayerView.m */; };
 		D1BAEFB81EC552C0008D4D60 /* UIImage+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAEFB71EC552C0008D4D60 /* UIImage+Category.m */; };
+		D1BAEFBA1EC5ADAA008D4D60 /* squarePNG.png in Resources */ = {isa = PBXBuildFile; fileRef = D1BAEFB91EC5ADAA008D4D60 /* squarePNG.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -115,6 +116,7 @@
 		D1BAE6D51EC2DDC8008D4D60 /* VideoPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayerView.m; sourceTree = "<group>"; };
 		D1BAEFB61EC552C0008D4D60 /* UIImage+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Category.h"; sourceTree = "<group>"; };
 		D1BAEFB71EC552C0008D4D60 /* UIImage+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Category.m"; sourceTree = "<group>"; };
+		D1BAEFB91EC5ADAA008D4D60 /* squarePNG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = squarePNG.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +164,7 @@
 		D112613E1E05344E00792264 /* SmartVideo */ = {
 			isa = PBXGroup;
 			children = (
+				D1BAEFB91EC5ADAA008D4D60 /* squarePNG.png */,
 				D1BAE6A91EC153D8008D4D60 /* GPUImageFilter */,
 				D14265961EAE075700463958 /* View */,
 				D14265921EADE45B00463958 /* DownLoadManager */,
@@ -378,6 +381,7 @@
 				D140CF721E1E48FF00BABA31 /* smartVideo_pause@3x.png in Resources */,
 				D140CF7B1E1E4FAC00BABA31 /* smartVideo_arrow@2x.png in Resources */,
 				D140CF6F1E1E48FF00BABA31 /* smartVideo_eye@2x.png in Resources */,
+				D1BAEFBA1EC5ADAA008D4D60 /* squarePNG.png in Resources */,
 				D112614A1E05344E00792264 /* Main.storyboard in Resources */,
 				D140CF751E1E48FF00BABA31 /* smartVideo_ThumbImage@2x.png in Resources */,
 				D140CF701E1E48FF00BABA31 /* smartVideo_eye@3x.png in Resources */,

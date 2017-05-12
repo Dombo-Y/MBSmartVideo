@@ -16,6 +16,13 @@
 #import <AssetsLibrary/ALAssetsLibrary.h>
 
 #import "UIImage+Category.h"
+
+typedef enum : NSUInteger {
+    FaceCameraFilterNone,
+    FaceCameraFilterBeautify,
+    FaceCameraFilterSketch,
+} FaceCameraFilterEnum;
+
 @interface WXSmartVideoView()<
 WXSmartVideoDelegate
 >
@@ -32,6 +39,9 @@ WXSmartVideoDelegate
 
 @property (nonatomic, strong) GPUImageMovieWriter *writer;
 @property (nonatomic, strong) GPUImageBeautifyFilter *beautifyFilter;
+@property (nonatomic, strong) GPUImageView *filterView;
+@property (nonatomic, strong) id  tempFilter;
+
 
 @property (nonatomic, strong) NSURL *videoUrl;
 
@@ -43,11 +53,12 @@ WXSmartVideoDelegate
 
 @property (nonatomic, strong) UIButton *selfieBtn;// 开启自拍按钮
 @property (nonatomic, assign) BOOL isSelfie; // 是否自拍
+@property (nonatomic, strong) UIButton *beautifyBtn; //滤镜button
 @end
 
 
 #define kMAXDURATION 10
-#define kFaceSmartVideo 0
+#define kFaceSmartVideo 1
 //#define kWeakSelf
 @implementation WXSmartVideoView
 
@@ -65,6 +76,7 @@ WXSmartVideoDelegate
         [self addSubview:self.invertBtn];
         [self addSubview:self.bottomView];
 //        [self addSubview:self.selfieBtn];
+        [self addSubview:self.beautifyBtn];
     }
     return self;
 }
@@ -108,6 +120,24 @@ WXSmartVideoDelegate
         _selfieBtn.hidden = YES;
     }
     return _selfieBtn;
+}
+
+- (UIButton *)beautifyBtn {
+    if (!_beautifyBtn) {
+        _beautifyBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_beautifyBtn setTitle:@"美颜" forState:UIControlStateNormal];
+        [_beautifyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_beautifyBtn addTarget:self action:@selector(filter:) forControlEvents:UIControlEventTouchUpInside];
+        _beautifyBtn.frame = CGRectMake(SCREEN_WIDTH - 90, 70, 80, 80);
+        _beautifyBtn.tag = 1;
+        CALayer *layer = [[CALayer alloc] init];
+        layer.frame = _beautifyBtn.bounds;
+        layer.backgroundColor = [UIColor blackColor].CGColor;
+        layer.opacity = 0.7;
+        layer.cornerRadius = layer.frame.size.width/2;
+        [_beautifyBtn.layer addSublayer:layer];
+    }
+    return _beautifyBtn;
 }
 
 - (WXSmartVideoBottomView *)bottomView {
@@ -206,6 +236,38 @@ WXSmartVideoDelegate
     }
 }
 
+- (void)filter:(UIButton *)btn {
+    FaceCameraFilterEnum filterEnum = btn.tag;
+    [self.camera removeAllTargets];
+    switch (filterEnum) {
+        case FaceCameraFilterNone:{
+            btn.tag = 1;
+            [self.camera addTarget:_filterView];
+            _tempFilter = nil;
+        }
+            break;
+        case FaceCameraFilterBeautify:{
+            btn.tag = 2;
+            // MARK: 添加 美颜滤镜
+            _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
+            [self.camera addTarget:_beautifyFilter];
+            [_beautifyFilter addTarget:_filterView];
+            _tempFilter = _beautifyFilter;
+        }
+            break;
+        case FaceCameraFilterSketch:{
+            btn.tag = 0;
+            GPUImageSketchFilter *filter = [[GPUImageSketchFilter alloc] init];
+            [self.camera addTarget:filter];
+            [filter addTarget:_filterView];
+            _tempFilter = filter;
+        }
+            break;
+        default:
+            break;
+    }
+}
+
 #pragma mark - configRecorder
 - (void)configRecorder {
     self.recorder = [MBSmartVideoRecorder sharedRecorder];
@@ -244,22 +306,16 @@ WXSmartVideoDelegate
 }
 
 #pragma mark - VideoConfig
+// MARK : GPUImage 美颜相机
 - (void)faceSmartVideo {
-    GPUImageView *filterView = [[GPUImageView alloc] initWithFrame:self.bounds];
-    [self addSubview:filterView];
-    [self.camera addTarget:filterView];
+    _filterView = [[GPUImageView alloc] initWithFrame:self.bounds];
+    [self addSubview:_filterView];
+    [self.camera addTarget:_filterView];
     [self.camera startCameraCapture];
-    filterView.fillMode = 2;
-    
-#warning 这是一个坑, 不加这个眼能闪瞎
-    [self.camera removeAllTargets]; // 这句很重要！！ 否则添加滤镜会闪屏
-    
-// MARK: 添加 美颜滤镜
-    _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
-    [self.camera addTarget:_beautifyFilter];
-    [_beautifyFilter addTarget:filterView];
+    _filterView.fillMode = 2;
 }
 
+// MARK : 普通相机
 - (void)normalSmartVideo {
     [self addSubview:self.preview];
     [self configRecorder];
@@ -317,12 +373,6 @@ WXSmartVideoDelegate
                                                           }
                                                           NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
                                                           UIImage *img = [UIImage imageWithData:imageData];
-//                                                          UIImageView *imgView = [[UIImageView alloc] initWithImage:img];
-//#warning 这个地方反转无效啊啊啊啊啊啊
-                                                          //                                                          if (weakSelf.isSelfie) {
-//                                                              imgView.layer.transform = CATransform3DMakeRotation(M_PI, 0, 1, 0);
-//                                                              img = imgView.image;
-//                                                          }
                                                           [weakSelf previewPhoto:img];
                                                       }];
 }
@@ -367,14 +417,32 @@ WXSmartVideoDelegate
 - (void)writerCurrentFrameToLibrary {
     _savingImg = YES;
     kWeakSelf(self)
-    [self.camera capturePhotoAsJPEGProcessedUpToFilter:_beautifyFilter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
+
+    
+    if (_tempFilter) {
+        [self.camera capturePhotoAsJPEGProcessedUpToFilter:_tempFilter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
 #warning 这是第二个坑，用这种方式保存照片到相册正常，官方demo种的相片保存会90度旋转
-        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-        [library writeImageDataToSavedPhotosAlbum:processedJPEG metadata:self.camera.currentCaptureMetadata completionBlock:^(NSURL *assetURL, NSError *error2) {
-             UIImage *img = [UIImage imageWithData:processedJPEG];
-            [weakSelf saveImageWriteToPhotosAlbum:img];
-         }];
-    }];
+            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+            [library writeImageDataToSavedPhotosAlbum:processedJPEG metadata:self.camera.currentCaptureMetadata completionBlock:^(NSURL *assetURL, NSError *error2) {
+                UIImage *img = [UIImage imageWithData:processedJPEG];
+                [weakSelf saveImageWriteToPhotosAlbum:img];
+            }];
+        }];
+    }else {
+//        [self.camera capturePhotoAsSampleBufferWithCompletionHandler:^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
+//            if (imageSampleBuffer == nil) {
+//                return ;
+//            }
+//            NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+//            UIImage *img = [UIImage imageWithData:imageData];
+//            [weakSelf saveImageWriteToPhotosAlbum:img];
+//        }];
+//        UIGraphicsBeginImageContext(self.size);
+//        [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+//        UIImage *tempImg = UIGraphicsGetImageFromCurrentImageContext();
+//        UIImageWriteToSavedPhotosAlbum([UIImage fixOrientation:tempImg], self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+         [self showAlterViewTitle:@"失败" message:@"没有滤镜不能进行拍照"];
+    }
 }
 
 - (void)saveImageWriteToPhotosAlbum:(UIImage *)img {
@@ -385,6 +453,9 @@ WXSmartVideoDelegate
     }
     if (img) {
         UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    }else {
+        _savingImg = NO;
+         [self showAlterViewTitle:@"失败" message:@"照片保存失败"];
     }
 }
 
