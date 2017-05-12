@@ -35,5 +35,53 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
+            timestampString = "516262262.080089"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "370"
+            endingLineNumber = "370"
+            landmarkName = "-writerCurrentFrameToLibrary"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[WXSmartVideoView writerCurrentFrameToLibrary]"
+                  moduleName = "SmartVideo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/zhangsanke/GitHub/MBSmartVideo/SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
+                  timestampString = "516268927.382366"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "370"
+                  endingLineNumber = "370"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__47-[WXSmartVideoView writerCurrentFrameToLibrary]_block_invoke"
+                  moduleName = "SmartVideo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/zhangsanke/GitHub/MBSmartVideo/SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
+                  timestampString = "516268927.383879"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "370"
+                  endingLineNumber = "370"
+                  offsetFromSymbolStart = "20">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

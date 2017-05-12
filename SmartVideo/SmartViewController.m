@@ -13,6 +13,9 @@
 #import "HUBProcessView.h"
 #import "WXSmartVideoView.h"
 #import "WXVideoPreviewViewController.h"
+
+//#import "UIImageView+Category.h"
+#import "UIImage+Category.h"
 @interface SmartViewController ()
 
 @property (nonatomic, copy) NSString *videoUrll;
@@ -47,12 +50,47 @@
 //    self.tempView = [[UIView alloc] initWithFrame:CGRectMake(0, 200, CGRectGetWidth(self.view.frame), 300)];
 //    [self.view addSubview:self.tempView];
 //    self.tempView.backgroundColor = [UIColor brownColor];
+    
+//    UIImage *img = [UIImage imageNamed:@"video_right"];
+//    UIImageView *imgView = [[UIImageView alloc] initWithImage:img];
+//    imgView.frame = CGRectMake(100, 300, 100, 100);
+//    imgView.layer.transform = CATransform3DMakeRotation(M_PI, 0, 1, 0);
+//    [self.view addSubview:imgView];
+//    
+//    UIImageView *imgViewB = [[UIImageView alloc] initWithImage:imgView.image];
+//    imgViewB.frame = CGRectMake(100, 100, 100, 100);
+//    [self.view addSubview:imgViewB];
+//    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            UIGraphicsBeginImageContext(imgView.size);
+//            [imgView.layer renderInContext:UIGraphicsGetCurrentContext()];
+//            UIImage *tempImg = UIGraphicsGetImageFromCurrentImageContext();
+//            UIImageWriteToSavedPhotosAlbum([UIImage fixOrientation:tempImg], self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+//        }); 
+//    });
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+    if (!error) {
+        [self showAlterViewTitle:@"成功" message:@"照片保存成功"];
+    }else {
+        [self showAlterViewTitle:@"失败" message:@"照片保存失败"];
+    }
+}
+
+#pragma mark - CustomMethod
+- (void)showAlterViewTitle:(NSString *)title message:(NSString *)message {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message
+                                                   delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+}
+
 
 - (UIProgressView *)progressView {
     if (!_progressView) {

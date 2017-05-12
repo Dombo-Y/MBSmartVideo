@@ -191,6 +191,10 @@ MBSmartVideoWriterDelegate
     dispatch_async(self.sessionQueue, ^{
         self.captureDevice = [self deviceWithMediaType:AVMediaTypeVideo preferringPosition:AVCaptureDevicePositionBack];
         
+        if (self.videoDeviceInput) {
+            [self.session removeInput:self.videoDeviceInput];
+        }
+        
         NSError *error = nil;
         self.videoDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:self.captureDevice error:&error];
         if (!self.videoDeviceInput)
@@ -228,6 +232,7 @@ MBSmartVideoWriterDelegate
         {
             NSLog(@"captureDevice error %@",error);
         }
+        
         
         if ([self.session canAddInput:self.videoDeviceInput])
         {
@@ -270,6 +275,9 @@ MBSmartVideoWriterDelegate
                 NSLog(@"无法添加视频输入到会话");
             }
             
+            if (self.imageDataOutput) {
+                [self.session removeOutput:self.imageDataOutput];
+            }
             // MARK：图片输出
             self.imageDataOutput = [[AVCaptureStillImageOutput alloc] init];
             if ([self.session canAddOutput:self.imageDataOutput]) {
@@ -279,7 +287,136 @@ MBSmartVideoWriterDelegate
             // MARK :音频输出
             self.audioCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
             self.audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.audioCaptureDevice error:&error];
-            if (self.audioDeviceInput)
+            if (!self.audioDeviceInput)
+            {
+                NSLog(@"不能创建音频 %@", error);
+            }
+            
+            if ([self.session canAddInput:self.audioDeviceInput])
+            {
+                [self.session addInput:self.audioDeviceInput];
+            }else{
+                NSLog(@"无法添加音频输入");
+            }
+            
+            self.audioDataOutput = [[AVCaptureAudioDataOutput alloc] init];
+            [self.audioDataOutput setSampleBufferDelegate:self queue:self.audioDataOutputQueue];
+            
+            if ([self.session canAddOutput:self.audioDataOutput])
+            {
+                [self.session addOutput:self.audioDataOutput];
+            }
+            self.audioConnection = [self.audioDataOutput connectionWithMediaType:AVMediaTypeAudio];
+            [self.session commitConfiguration];
+        }
+    });
+}
+
+- (void)configFrameDuration {
+    int frameRate;
+    NSError *error;
+    if ([NSProcessInfo processInfo].processorCount == 1)
+    {
+        if ([self.session canSetSessionPreset:AVCaptureSessionPresetLow])
+        {
+            [self.session setSessionPreset:AVCaptureSessionPresetLow];
+        }
+        frameRate = 10;
+    }
+    else
+    {
+        if ([self.session canSetSessionPreset:AVCaptureSessionPreset640x480])
+        {
+            [self.session setSessionPreset:AVCaptureSessionPreset640x480];
+        }
+        frameRate = 30;
+    }
+    
+    CMTime frameDuration = CMTimeMake(1, frameRate);
+    if ([self.captureDevice lockForConfiguration:&error])
+    {
+        self.captureDevice.activeVideoMaxFrameDuration = frameDuration;
+        self.captureDevice.activeVideoMinFrameDuration = frameDuration;
+        [self.captureDevice unlockForConfiguration];
+    }
+    else
+    {
+        NSLog(@"captureDevice error %@",error);
+    }
+}
+
+- (void)configurationSessionFront {
+    dispatch_async(self.sessionQueue, ^{
+        self.captureDevice = [self deviceWithMediaType:AVMediaTypeVideo preferringPosition:AVCaptureDevicePositionFront];
+        
+        if (self.videoDeviceInput) {
+            [self.session removeInput:self.videoDeviceInput];
+        }
+        
+        [self configFrameDuration];
+        
+        NSError *error = nil;
+        self.videoDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:self.captureDevice error:&error];
+        if (!self.videoDeviceInput)  {  NSLog(@"未找到设备");  }
+        
+        // === beginConfiguration ===
+        [self.session beginConfiguration];
+        if ([self.session canAddInput:self.videoDeviceInput])
+        {
+            [self.session addInput:self.videoDeviceInput];
+            if (self.videoDataOutput)
+            {
+                [self.session removeOutput:self.videoDataOutput];
+            }
+            
+            //MARK :视频输出
+            self.videoDataOutput = [[AVCaptureVideoDataOutput alloc] init];
+            self.videoDataOutput.videoSettings = @{(id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA)};
+            [self.videoDataOutput setSampleBufferDelegate:self queue:self.videoDataOutputQueue];
+            self.videoDataOutput.alwaysDiscardsLateVideoFrames = NO;
+            
+            if ([self.session canAddOutput:self.videoDataOutput])
+            {
+                [self.session addOutput:self.videoDataOutput];
+                [self.captureDevice addObserver:self
+                                     forKeyPath:@"adjustingFocus"
+                                        options:NSKeyValueObservingOptionNew
+                                        context:nil];
+                
+                self.videoConnection = [self.videoDataOutput connectionWithMediaType:AVMediaTypeVideo];
+                if (self.videoConnection.isVideoStabilizationSupported)
+                {
+                    self.videoConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+                }
+                
+                UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
+                AVCaptureVideoOrientation initialVideoOrientation = AVCaptureVideoOrientationPortrait;
+                if (statusBarOrientation != UIInterfaceOrientationUnknown)
+                {
+                    initialVideoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
+                }
+                self.videoConnection.videoOrientation = initialVideoOrientation;
+            }
+            else
+            {
+                NSLog(@"无法添加视频输入到会话");
+            }
+            
+            if (self.imageDataOutput) {
+                [self.session removeOutput:self.imageDataOutput];
+            }
+            // MARK：图片输出
+            self.imageDataOutput = [[AVCaptureStillImageOutput alloc] init];
+            if ([self.session canAddOutput:self.imageDataOutput]) {
+                [self.session addOutput:self.imageDataOutput];
+            }else {
+                NSLog(@"图片输出 加入失败");
+            }
+            
+            // MARK :音频输出
+            self.audioCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+            self.audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.audioCaptureDevice error:&error];
+            if (!self.audioDeviceInput)
             {
                 NSLog(@"不能创建音频 %@", error);
             }
@@ -318,26 +455,48 @@ MBSmartVideoWriterDelegate
         AVCaptureDevice *device = input.device;
         if ( [device hasMediaType:AVMediaTypeVideo] ) {
             AVCaptureDevicePosition position = device.position;
-            AVCaptureDevice *newCamera =nil;
-            AVCaptureDeviceInput *newInput =nil;
+//            AVCaptureDevice *newCamera =nil;
+//            AVCaptureDeviceInput *newInput =nil;
             if (position ==AVCaptureDevicePositionFront)
-                newCamera = [self cameraWithPosition:AVCaptureDevicePositionBack];
+//                self.captureDevice = [self cameraWithPosition:AVCaptureDevicePositionBack];
+                [self configurationSession];
             else
-                newCamera = [self cameraWithPosition:AVCaptureDevicePositionFront];
+//                self.captureDevice = [self cameraWithPosition:AVCaptureDevicePositionFront];
+                [self configurationSessionFront];
             
-            newInput = [AVCaptureDeviceInput deviceInputWithDevice:newCamera error:nil];
-            // beginConfiguration ensures that pending changes are not applied immediately
-            [self.session beginConfiguration];
-            
-            [self.session removeInput:input];
-            [self.session addInput:newInput];
-            
-            // Changes take effect once the outermost commitConfiguration is invoked.
-            [self.session commitConfiguration];
+//            self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.captureDevice error:nil];
+// 
+//            [self.session beginConfiguration];
+//            [self.session removeInput:input];
+//            [self.session addInput:self.videoDeviceInput];
+//            [self.session commitConfiguration];
             break;
         }
     }
 }
+
+//- (void)swapFrontAndBackCameras {
+//    NSArray *inputs =self.session.inputs;
+//    for (AVCaptureDeviceInput *input in inputs ) {
+//        AVCaptureDevice *device = input.device;
+//        if ( [device hasMediaType:AVMediaTypeVideo] ) {
+//            AVCaptureDevicePosition position = device.position;
+//            if (position ==AVCaptureDevicePositionFront)
+//                self.captureDevice = [self cameraWithPosition:AVCaptureDevicePositionBack];
+//            else
+//                self.captureDevice = [self cameraWithPosition:AVCaptureDevicePositionFront];
+//            
+//                        self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:self.captureDevice error:nil];
+//            
+//                        [self.session beginConfiguration];
+//                        [self.session removeInput:input];
+//                        [self.session addInput:self.videoDeviceInput];
+//                        [self.session commitConfiguration];
+//            break;
+//        }
+//    }
+//}
+
 
 - (AVCaptureDevice *)cameraWithPosition:(AVCaptureDevicePosition)position {
     NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];

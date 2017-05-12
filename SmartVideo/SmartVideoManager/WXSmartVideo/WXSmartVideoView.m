@@ -14,6 +14,8 @@
 #import "GPUImageSketchFilter.h"
 #import "GPUImageBeautifyFilter.h"
 #import <AssetsLibrary/ALAssetsLibrary.h>
+
+#import "UIImage+Category.h"
 @interface WXSmartVideoView()<
 WXSmartVideoDelegate
 >
@@ -38,6 +40,9 @@ WXSmartVideoDelegate
 @property (nonatomic, strong) WXVideoPreviewViewController *vc;
 
 @property (nonatomic, strong) UIView *focusView;
+
+@property (nonatomic, strong) UIButton *selfieBtn;// 开启自拍按钮
+@property (nonatomic, assign) BOOL isSelfie; // 是否自拍
 @end
 
 
@@ -59,6 +64,7 @@ WXSmartVideoDelegate
         
         [self addSubview:self.invertBtn];
         [self addSubview:self.bottomView];
+//        [self addSubview:self.selfieBtn];
     }
     return self;
 }
@@ -81,6 +87,27 @@ WXSmartVideoDelegate
         [_invertBtn.layer addSublayer:layer];
     }
     return _invertBtn;
+}
+
+- (UIButton *)selfieBtn {
+    if (!_selfieBtn) {
+        _selfieBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_selfieBtn setTitle:@"自拍模式" forState:UIControlStateNormal];
+        [_selfieBtn setTitle:@"正常模式" forState:UIControlStateSelected];
+        [_selfieBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_selfieBtn addTarget:self action:@selector(selfieAction:) forControlEvents:UIControlEventTouchUpInside];
+        _selfieBtn.frame = CGRectMake(SCREEN_WIDTH - 90, 70, 80, 80);
+        
+        CALayer *layer = [[CALayer alloc] init];
+        layer.frame = _selfieBtn.bounds;
+        layer.backgroundColor = [UIColor blackColor].CGColor;
+        layer.opacity = 0.7;
+        layer.cornerRadius = layer.frame.size.width/2;
+        [_selfieBtn.layer addSublayer:layer];
+        
+        _selfieBtn.hidden = YES;
+    }
+    return _selfieBtn;
 }
 
 - (WXSmartVideoBottomView *)bottomView {
@@ -124,7 +151,6 @@ WXSmartVideoDelegate
         _writer.encodingLiveVideo = YES;
         _writer.shouldPassthroughAudio = YES;
         _writer.hasAudioTrack=YES;
- 
     }
     return _writer;
 }
@@ -151,13 +177,32 @@ WXSmartVideoDelegate
     }
     return _focusView;
 }
+
 #pragma mark - ActionMethod 前后摄像头切换
 - (void)InvertShot:(UIButton *)btn {
     btn.selected = !btn.selected;
+    if (btn.selected) {
+        _isSelfie = YES;
+        _selfieBtn.hidden = NO;
+    }else {
+        _isSelfie = NO;
+        _selfieBtn.hidden = YES;
+    }
+    
     if (kFaceSmartVideo) {
         [self.camera rotateCamera];
     }else {
         [self.recorder swapFrontAndBackCameras];
+    }
+}
+
+- (void)selfieAction:(UIButton *)btn {
+    btn.selected = !btn.selected;
+    _isSelfie = btn.selected;
+    if (_isSelfie) {
+        NSLog(@"自拍模式 %d", _isSelfie);
+    }else {
+        NSLog(@"正常模式（镜像自拍）%d", _isSelfie);
     }
 }
 
@@ -261,6 +306,7 @@ WXSmartVideoDelegate
     [conntion setVideoScaleAndCropFactor:1];
     if (!conntion) {
         NSLog(@"拍照失败");
+        _savingImg = NO;
         return;
     }
     kWeakSelf(self)
@@ -271,6 +317,12 @@ WXSmartVideoDelegate
                                                           }
                                                           NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
                                                           UIImage *img = [UIImage imageWithData:imageData];
+//                                                          UIImageView *imgView = [[UIImageView alloc] initWithImage:img];
+//#warning 这个地方反转无效啊啊啊啊啊啊
+                                                          //                                                          if (weakSelf.isSelfie) {
+//                                                              imgView.layer.transform = CATransform3DMakeRotation(M_PI, 0, 1, 0);
+//                                                              img = imgView.image;
+//                                                          }
                                                           [weakSelf previewPhoto:img];
                                                       }];
 }

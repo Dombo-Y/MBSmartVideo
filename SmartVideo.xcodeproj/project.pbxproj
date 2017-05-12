@@ -46,6 +46,7 @@
 		D1BAE6C31EC19F9E008D4D60 /* WXSmartVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6C01EC19F9E008D4D60 /* WXSmartVideoView.m */; };
 		D1BAE6C71EC1B6FA008D4D60 /* WXVideoPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6C61EC1B6FA008D4D60 /* WXVideoPreviewViewController.m */; };
 		D1BAE6D61EC2DDC8008D4D60 /* VideoPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAE6D51EC2DDC8008D4D60 /* VideoPlayerView.m */; };
+		D1BAEFB81EC552C0008D4D60 /* UIImage+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = D1BAEFB71EC552C0008D4D60 /* UIImage+Category.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -112,6 +113,8 @@
 		D1BAE6C61EC1B6FA008D4D60 /* WXVideoPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXVideoPreviewViewController.m; sourceTree = "<group>"; };
 		D1BAE6D41EC2DDC8008D4D60 /* VideoPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayerView.h; sourceTree = "<group>"; };
 		D1BAE6D51EC2DDC8008D4D60 /* VideoPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPlayerView.m; sourceTree = "<group>"; };
+		D1BAEFB61EC552C0008D4D60 /* UIImage+Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Category.h"; sourceTree = "<group>"; };
+		D1BAEFB71EC552C0008D4D60 /* UIImage+Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Category.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +236,8 @@
 			children = (
 				D140CF581E1E425400BABA31 /* UIColor+Category.h */,
 				D140CF591E1E425400BABA31 /* UIColor+Category.m */,
+				D1BAEFB61EC552C0008D4D60 /* UIImage+Category.h */,
+				D1BAEFB71EC552C0008D4D60 /* UIImage+Category.m */,
 				D1BAE6A11EC013CA008D4D60 /* UIView+Category.h */,
 				D1BAE6A21EC013CA008D4D60 /* UIView+Category.m */,
 			);
@@ -440,6 +445,7 @@
 			files = (
 				D1BAE6A31EC013CA008D4D60 /* UIView+Category.m in Sources */,
 				D140CF3B1E1E343800BABA31 /* MBPlaySmartVideoViewController.m in Sources */,
+				D1BAEFB81EC552C0008D4D60 /* UIImage+Category.m in Sources */,
 				D14265951EADE47000463958 /* DownLoadManager.m in Sources */,
 				D140CF3D1E1E343800BABA31 /* MBSmartVideoRecorder.m in Sources */,
 				D140CF2F1E1E338100BABA31 /* SmartViewController.m in Sources */,
