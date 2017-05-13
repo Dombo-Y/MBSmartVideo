@@ -58,7 +58,7 @@
                   moduleName = "SmartVideo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/zhangsanke/GitHub/MBSmartVideo/SmartVideo/SmartVideoManager/MBSmartVideoRecorder.m"
-                  timestampString = "516276155.942482"
+                  timestampString = "516353798.684314"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "585"
@@ -73,7 +73,7 @@
                   moduleName = "SmartVideo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/zhangsanke/GitHub/MBSmartVideo/SmartVideo/SmartVideoManager/MBSmartVideoRecorder.m"
-                  timestampString = "516276155.943678"
+                  timestampString = "516353798.685789"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "585"
@@ -96,54 +96,6 @@
             startingLineNumber = "690"
             endingLineNumber = "690"
             landmarkName = "-finishCaptureWithReason:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
-            timestampString = "516277380.495508"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "449"
-            endingLineNumber = "449"
-            landmarkName = "-saveImageWriteToPhotosAlbum:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
-            timestampString = "516277380.495508"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "454"
-            endingLineNumber = "454"
-            landmarkName = "-saveImageWriteToPhotosAlbum:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
-            timestampString = "516277380.495508"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "464"
-            endingLineNumber = "464"
-            landmarkName = "-image:didFinishSavingWithError:contextInfo:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

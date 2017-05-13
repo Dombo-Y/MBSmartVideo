@@ -54,20 +54,22 @@ WXSmartVideoDelegate
 @property (nonatomic, strong) UIButton *selfieBtn;// 开启自拍按钮
 @property (nonatomic, assign) BOOL isSelfie; // 是否自拍
 @property (nonatomic, strong) UIButton *beautifyBtn; //滤镜button
+
+@property (nonatomic, assign) BOOL OpenGPUImage;
 @end
 
 
 #define kMAXDURATION 10
-#define kFaceSmartVideo 1
 //#define kWeakSelf
 @implementation WXSmartVideoView
 
-- (instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame GPUImage:(BOOL)open{
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor blackColor];
-        
-        if (kFaceSmartVideo) {
+        _OpenGPUImage = open;
+        if (open) {
             [self faceSmartVideo]; NSLog(@"美颜");
+            [self addSubview:self.beautifyBtn];
         }
         else {
             [self normalSmartVideo]; NSLog(@"普通");
@@ -76,7 +78,6 @@ WXSmartVideoDelegate
         [self addSubview:self.invertBtn];
         [self addSubview:self.bottomView];
 //        [self addSubview:self.selfieBtn];
-        [self addSubview:self.beautifyBtn];
     }
     return self;
 }
@@ -125,7 +126,7 @@ WXSmartVideoDelegate
 - (UIButton *)beautifyBtn {
     if (!_beautifyBtn) {
         _beautifyBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_beautifyBtn setTitle:@"美颜" forState:UIControlStateNormal];
+        [_beautifyBtn setTitle:@"无" forState:UIControlStateNormal];
         [_beautifyBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_beautifyBtn addTarget:self action:@selector(filter:) forControlEvents:UIControlEventTouchUpInside];
         _beautifyBtn.frame = CGRectMake(SCREEN_WIDTH - 90, 70, 80, 80);
@@ -167,9 +168,8 @@ WXSmartVideoDelegate
 
 - (NSURL *)videoUrl {
     if (!_videoUrl) {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES);
-        NSString *pathToMovie = [paths objectAtIndex:0];
-        _videoUrl = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/aaa.mp4",pathToMovie]];
+        NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Movie.m4v"];
+        _videoUrl = [NSURL fileURLWithPath:pathToMovie];
         unlink([pathToMovie UTF8String]);
     }
     return _videoUrl;
@@ -177,7 +177,7 @@ WXSmartVideoDelegate
 
 - (GPUImageMovieWriter *)writer {
     if (!_writer) {
-        _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:self.videoUrl size:self.size];
+        _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:self.videoUrl size:self.filterView.size];
         _writer.encodingLiveVideo = YES;
         _writer.shouldPassthroughAudio = YES;
         _writer.hasAudioTrack=YES;
@@ -208,6 +208,30 @@ WXSmartVideoDelegate
     return _focusView;
 }
 
+- (GPUImageView *)filterView {
+    if (!_filterView) {
+        _filterView = [[GPUImageView alloc] initWithFrame:self.bounds];
+        _filterView.fillMode = 2;
+    }
+    return _filterView;
+}
+
+- (void)captureAndRecording {
+//    _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
+//    _tempFilter = _beautifyFilter;
+//    [self.camera addTarget:_beautifyFilter];
+//    
+//    [_beautifyFilter addTarget:self.writer];
+//    [_beautifyFilter addTarget:self.filterView];
+    
+    [self addSubview:self.filterView];
+    
+    [self.camera addTarget:self.filterView];
+    [self.camera startCameraCapture];
+    self.camera.audioEncodingTarget = self.writer;
+}
+                           
+
 #pragma mark - ActionMethod 前后摄像头切换
 - (void)InvertShot:(UIButton *)btn {
     btn.selected = !btn.selected;
@@ -219,7 +243,7 @@ WXSmartVideoDelegate
         _selfieBtn.hidden = YES;
     }
     
-    if (kFaceSmartVideo) {
+    if (_OpenGPUImage) {
         [self.camera rotateCamera];
     }else {
         [self.recorder swapFrontAndBackCameras];
@@ -244,6 +268,7 @@ WXSmartVideoDelegate
             btn.tag = 1;
             [self.camera addTarget:_filterView];
             _tempFilter = nil;
+            [_beautifyBtn setTitle:@"无" forState:UIControlStateNormal];
         }
             break;
         case FaceCameraFilterBeautify:{
@@ -252,7 +277,9 @@ WXSmartVideoDelegate
             _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
             [self.camera addTarget:_beautifyFilter];
             [_beautifyFilter addTarget:_filterView];
+            [_beautifyFilter addTarget:self.writer];
             _tempFilter = _beautifyFilter;
+            [_beautifyBtn setTitle:@"美颜" forState:UIControlStateNormal];
         }
             break;
         case FaceCameraFilterSketch:{
@@ -260,7 +287,9 @@ WXSmartVideoDelegate
             GPUImageSketchFilter *filter = [[GPUImageSketchFilter alloc] init];
             [self.camera addTarget:filter];
             [filter addTarget:_filterView];
+            [filter addTarget:self.writer];
             _tempFilter = filter;
+            [_beautifyBtn setTitle:@"黑白" forState:UIControlStateNormal];
         }
             break;
         default:
@@ -308,11 +337,18 @@ WXSmartVideoDelegate
 #pragma mark - VideoConfig
 // MARK : GPUImage 美颜相机
 - (void)faceSmartVideo {
-    _filterView = [[GPUImageView alloc] initWithFrame:self.bounds];
-    [self addSubview:_filterView];
-    [self.camera addTarget:_filterView];
+    //    _beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
+    //    _tempFilter = _beautifyFilter;
+    //    [self.camera addTarget:_beautifyFilter];
+    //
+    //    [_beautifyFilter addTarget:self.writer];
+    //    [_beautifyFilter addTarget:self.filterView];
+    
+    [self addSubview:self.filterView];
+    
+    [self.camera addTarget:self.filterView];
     [self.camera startCameraCapture];
-    _filterView.fillMode = 2;
+    self.camera.audioEncodingTarget = self.writer;
 }
 
 // MARK : 普通相机
@@ -344,14 +380,13 @@ WXSmartVideoDelegate
 
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView captureCurrentFrame:(BOOL)capture {
     if (capture && !_savingImg) {
-        if (kFaceSmartVideo) {
+        if (_OpenGPUImage) {
             [self writerCurrentFrameToLibrary];
         }else {
             [self smartVideoCurrentFrame];
         }
     }
 }
-
 
 - (void)smartVideoCurrentFrame {
     _savingImg = YES;
@@ -379,19 +414,21 @@ WXSmartVideoDelegate
 
 
 - (void)startRecording {
-    if (kFaceSmartVideo) {
-        self.camera.audioEncodingTarget = _writer;
-        [_writer startRecording];
+    if (_OpenGPUImage) {
+        if (!_tempFilter) {
+            [self showAlterViewTitle:@"失败" message:@"没有滤镜不能录制"];
+        }
+        [self.writer startRecording];
     }else {
         [self.recorder startCapture];
     }
 }
 
 - (void)finishRecording {
-    if (kFaceSmartVideo) {
-        [_beautifyFilter removeTarget:_writer];
+    if (_OpenGPUImage) {
+        [_beautifyFilter removeTarget:self.writer];
         self.camera.audioEncodingTarget = nil;
-        [_writer finishRecording];
+        [self.writer finishRecording];
         [self writerVideoToLibrary];
     }else {
         [self.recorder stopCapture];
@@ -401,6 +438,7 @@ WXSmartVideoDelegate
 #pragma mark - Save 
 - (void)writerVideoToLibrary {
     ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    NSLog(@"视频录制完成 地址是这个 %@", self.videoUrl);
     if ([library videoAtPathIsCompatibleWithSavedPhotosAlbum:self.videoUrl]) {
         [library writeVideoAtPathToSavedPhotosAlbum:self.videoUrl completionBlock:^(NSURL *assetURL, NSError *error) {
              dispatch_async(dispatch_get_main_queue(), ^{
@@ -418,29 +456,16 @@ WXSmartVideoDelegate
     _savingImg = YES;
     kWeakSelf(self)
 
-    
     if (_tempFilter) {
+        #warning 这是第二个坑，用这种方式保存照片到相册正常，官方demo种的相片保存会90度旋转
+        //            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        //            [library writeImageDataToSavedPhotosAlbum:processedJPEG metadata:self.camera.currentCaptureMetadata completionBlock:^(NSURL *assetURL, NSError *error2) {
+        //            }];
         [self.camera capturePhotoAsJPEGProcessedUpToFilter:_tempFilter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
-#warning 这是第二个坑，用这种方式保存照片到相册正常，官方demo种的相片保存会90度旋转
-            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-            [library writeImageDataToSavedPhotosAlbum:processedJPEG metadata:self.camera.currentCaptureMetadata completionBlock:^(NSURL *assetURL, NSError *error2) {
-                UIImage *img = [UIImage imageWithData:processedJPEG];
-                [weakSelf saveImageWriteToPhotosAlbum:img];
-            }];
+            UIImage *img = [UIImage imageWithData:processedJPEG];
+            [weakSelf saveImageWriteToPhotosAlbum:img];
         }];
     }else {
-//        [self.camera capturePhotoAsSampleBufferWithCompletionHandler:^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
-//            if (imageSampleBuffer == nil) {
-//                return ;
-//            }
-//            NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-//            UIImage *img = [UIImage imageWithData:imageData];
-//            [weakSelf saveImageWriteToPhotosAlbum:img];
-//        }];
-//        UIGraphicsBeginImageContext(self.size);
-//        [self.layer renderInContext:UIGraphicsGetCurrentContext()];
-//        UIImage *tempImg = UIGraphicsGetImageFromCurrentImageContext();
-//        UIImageWriteToSavedPhotosAlbum([UIImage fixOrientation:tempImg], self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
          [self showAlterViewTitle:@"失败" message:@"没有滤镜不能进行拍照"];
     }
 }
@@ -454,13 +479,11 @@ WXSmartVideoDelegate
     if (img) {
         UIImageWriteToSavedPhotosAlbum(img, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }else {
-        _savingImg = NO;
          [self showAlterViewTitle:@"失败" message:@"照片保存失败"];
     }
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-    _savingImg = NO;
     if (!error) {
         [self showAlterViewTitle:@"成功" message:@"照片保存成功"];
     }else {
@@ -470,11 +493,11 @@ WXSmartVideoDelegate
 
 #pragma mark - CustomMethod
 - (void)showAlterViewTitle:(NSString *)title message:(NSString *)message {
+    _savingImg = NO;
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message
                                                    delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alert show];
 }
-
 
 - (void)previewSandboxVideo:(NSString *)sanboxURL videoInfo:(NSDictionary *)info{
     NSLog(@"%@", sanboxURL);

@@ -14,4 +14,8 @@
 @property (nonatomic, copy) void (^finishedRecordBlock)(NSDictionary *dic);
 
 @property (nonatomic, copy) void (^finishedCaptureBlock)(UIImage *img);
+
+
+
+- (instancetype)initWithFrame:(CGRect)frame GPUImage:(BOOL)open;
 @end

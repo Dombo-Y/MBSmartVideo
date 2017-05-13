@@ -87,6 +87,15 @@
                                     <action selector="wxSmartVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="I6D-bx-8So"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9bB-WQ-WLb">
+                                <rect key="frame" x="0.0" y="291" width="320" height="55"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.9005759413807487" blue="0.57351864146340059" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="GPUImage"/>
+                                <connections>
+                                    <action selector="GPUImageCapture:" destination="BYZ-38-t0r" eventType="touchUpInside" id="luM-ob-VhF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>

@@ -129,7 +129,7 @@
 - (IBAction)wxSmartVideo:(UIButton *)sender {
     if (![self isSimulator]) {
         NSLog(@"小视频全屏录制");
-        WXSmartVideoView *wxsmartView = [[WXSmartVideoView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        WXSmartVideoView *wxsmartView = [[WXSmartVideoView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) GPUImage:NO];
 //        wxsmartView.finishedRecordBlock = ^(NSDictionary *dic) {
 //            NSLog(@"录制完成 %@", [dic objectForKey:@"videoURL"]);
 //            self.videoUrll = [[dic objectForKey:@"videoURL"] description];
@@ -178,6 +178,15 @@
                                   }];
 }
 
+- (IBAction)GPUImageCapture:(UIButton *)sender {
+    if (![self isSimulator]) {
+        NSLog(@"小视频全屏录制");
+        WXSmartVideoView *wxsmartView = [[WXSmartVideoView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) GPUImage:YES];
+        [self.navigationController.view addSubview:wxsmartView];
+    }else {
+        NSLog(@"模拟器不支持小视频录制");
+    }
+}
 
 - (void)uploadFileWithURL:(NSString *)url{
 //    if (_isUploadFile) {
