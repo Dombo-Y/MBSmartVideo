@@ -57,6 +57,11 @@ MBActionSheetDelegate
     self.navigationController.navigationBar.hidden = YES;
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [self.player pause];
+}
+
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -629,5 +634,6 @@ MBActionSheetDelegate
     [self.item removeObserver:self forKeyPath:@"loadedTimeRanges" context:nil];
     [self.player removeTimeObserver:self.timeObserver];
     self.player = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:nil];
 }
 @end
