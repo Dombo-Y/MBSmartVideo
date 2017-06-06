@@ -58,7 +58,7 @@
                   moduleName = "SmartVideo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/zhangsanke/GitHub/MBSmartVideo/SmartVideo/SmartVideoManager/MBSmartVideoRecorder.m"
-                  timestampString = "516353798.684314"
+                  timestampString = "518432919.434994"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "585"
@@ -73,7 +73,7 @@
                   moduleName = "SmartVideo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/zhangsanke/GitHub/MBSmartVideo/SmartVideo/SmartVideoManager/MBSmartVideoRecorder.m"
-                  timestampString = "516353798.685789"
+                  timestampString = "518432919.43646"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "585"
@@ -89,13 +89,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartVideo/SmartVideoManager/MBSmartVideoRecorder.m"
-            timestampString = "516272932.267602"
+            filePath = "SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
+            timestampString = "518431816.52957"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "690"
-            endingLineNumber = "690"
-            landmarkName = "-finishCaptureWithReason:"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
+            landmarkName = "-captureAndRecording"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SmartVideo/SmartVideoManager/WXSmartVideo/WXSmartVideoView.m"
+            timestampString = "518432077.413271"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
+            landmarkName = "-writer"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

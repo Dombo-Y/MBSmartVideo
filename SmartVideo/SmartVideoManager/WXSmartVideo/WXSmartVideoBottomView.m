@@ -121,4 +121,9 @@ SmartVideoControlDelegate
         [self.delegate wxSmartVideo:self zoomLens:_scaleNum];
     }
 }
+
+- (void)restoreUI {
+    _backBtn.hidden = NO;
+    _tipLabel.hidden = NO;
+}
 @end

@@ -26,5 +26,7 @@
 @property (nonatomic, weak)id <WXSmartVideoDelegate>delegate;
 
 @property (nonatomic, assign)NSInteger duration;
+
+- (void)restoreUI;
 @end
 

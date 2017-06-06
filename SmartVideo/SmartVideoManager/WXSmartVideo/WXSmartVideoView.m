@@ -16,6 +16,7 @@
 #import <AssetsLibrary/ALAssetsLibrary.h>
 
 #import "UIImage+Category.h"
+#import <objc/runtime.h>
 
 typedef enum : NSUInteger {
     FaceCameraFilterNone,
@@ -177,7 +178,7 @@ WXSmartVideoDelegate
 
 - (GPUImageMovieWriter *)writer {
     if (!_writer) {
-        _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:self.videoUrl size:self.filterView.size];
+        _writer = [[GPUImageMovieWriter alloc] initWithMovieURL:self.videoUrl size:[self videoSize:self.filterView.size]];
         _writer.encodingLiveVideo = YES;
         _writer.shouldPassthroughAudio = YES;
         _writer.hasAudioTrack=YES;
@@ -362,6 +363,24 @@ WXSmartVideoDelegate
     });
 }
 
+- (CGSize)videoSize:(CGSize)size {
+    /**
+     解决宽度不是16倍数会出现绿边问题
+     */
+    int width = size.width;
+    int height = size.height;
+    while (width%16>0)
+    {
+        width = width +1;
+    }
+    
+    while (height%16>0)
+    {
+        height = height +1;
+    }
+    return CGSizeMake(width, height);
+}
+
 #pragma  mark - WXSmartVideoDelegate
 - (void)wxSmartVideo:(WXSmartVideoBottomView *)smartVideoView zoomLens:(CGFloat)scaleNum {
     [self.recorder setScaleFactor:scaleNum];
@@ -417,8 +436,15 @@ WXSmartVideoDelegate
     if (_OpenGPUImage) {
         if (!_tempFilter) {
             [self showAlterViewTitle:@"失败" message:@"没有滤镜不能录制"];
+            [self.bottomView restoreUI];
+        }else {
+            if (self.writer.assetWriter.status != 0) {
+                [self showAlterViewTitle:@"提示" message:@"请返回，重复录制"];
+                [self.bottomView restoreUI];
+            }else {
+                [self.writer startRecording];
+            }
         }
-        [self.writer startRecording];
     }else {
         [self.recorder startCapture];
     }
@@ -427,7 +453,6 @@ WXSmartVideoDelegate
 - (void)finishRecording {
     if (_OpenGPUImage) {
         [_beautifyFilter removeTarget:self.writer];
-        self.camera.audioEncodingTarget = nil;
         [self.writer finishRecording];
         [self writerVideoToLibrary];
     }else {
